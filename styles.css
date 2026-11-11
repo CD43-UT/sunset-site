@@ -112,17 +112,20 @@ body.reduce-motion .vision-wash {
 
 .vision-name {
   position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 12.5dvh;
+  left: 50%;
+  bottom: calc(12.5dvh + 0.45rem);
   z-index: 3;
+  width: max-content;
+  max-width: calc(100% - 2rem);
   margin: 0;
-  padding: 0.3rem 1rem 0.15rem;
+  padding: 0.28rem 0.75rem;
+  transform: translateX(-50%);
+  border-radius: 999px;
+  background: rgba(20, 12, 9, 0.62);
   text-align: center;
   font: 600 0.85rem/1.2 system-ui, sans-serif;
   letter-spacing: 0.03em;
   color: #f6efe6;
-  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.65);
   pointer-events: none;
 }
 
