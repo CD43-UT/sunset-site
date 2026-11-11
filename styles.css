@@ -47,11 +47,11 @@ body.reduce-motion .bleed {
   display: flex;
   align-items: center;
   justify-content: space-evenly;
-  background: rgba(12, 8, 6, 0.42);
+  background: #3e3278;
 }
 
 .circle {
-  width: min(7dvh, 5.5vw);
+  width: min(7dvh, 4.6vw);
   aspect-ratio: 1;
   border-radius: 50%;
   border: 2px solid rgba(246, 239, 230, 0.92);
