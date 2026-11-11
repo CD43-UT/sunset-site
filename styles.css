@@ -117,7 +117,7 @@ body.reduce-motion .bleed {
   display: flex;
   align-items: center;
   justify-content: space-evenly;
-  background: #3e3278;
+  background: linear-gradient(to bottom, #3e3278, #1d163b);
 }
 
 .circle {

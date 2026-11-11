@@ -1,6 +1,6 @@
 # sunset site
 
-Full-bleed photographs from [Wikimedia Commons Category:Sunsets](https://commons.wikimedia.org/wiki/Category:Sunsets). Side arrows and the left and right arrow keys slide the previous or next photo into view. Nothing advances on its own.
+Full-bleed photographs from [Wikimedia Commons Category:Sunsets](https://commons.wikimedia.org/wiki/Category:Sunsets), cropped around the sun or the brightest area. Side arrows and the left and right arrow keys slide the previous or next photo into view. Nothing advances on its own. The bottom band fades from bluish purple to a darker purple.
 
 ```bash
 python3 server.py
