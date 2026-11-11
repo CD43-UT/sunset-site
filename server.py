@@ -28,7 +28,8 @@ ALLOWED_TYPES = {"image/jpeg", "image/png", "image/webp", "image/gif"}
 MAX_PHOTOS = 40
 MAX_PAGES = 6
 CACHE_SECONDS = 60 * 30
-THUMB_WIDTH = 1280
+THUMB_WIDTHS = (1920, 1280)
+MIN_CROP = 960
 
 BASE_QUERY = {
     "action": "query",
@@ -121,7 +122,7 @@ def _candidates(pages: list) -> list[dict]:
     return found
 
 
-def _thumb_url(original: str, width: int = THUMB_WIDTH) -> str:
+def _thumb_url(original: str, width: int) -> str:
     clean = original.split("?", 1)[0]
     marker = "/wikipedia/commons/"
     index = clean.find(marker)
@@ -196,13 +197,14 @@ def bright_box(image: Image.Image) -> tuple[int, int, int, int]:
     else:
         fraction = 0.72
     side = min(sample_w, sample_h, max(int(min(sample_w, sample_h) * fraction), radius * 2))
-    x0 = max(0, min(sample_w - side, int(round(center_x - side / 2))))
-    y0 = max(0, min(sample_h - side, int(round(center_y - side / 2))))
-    left = round(x0 * width / sample_w)
-    top = round(y0 * height / sample_h)
-    right = min(width, round((x0 + side) * width / sample_w))
-    bottom = min(height, round((y0 + side) * height / sample_h))
-    return left, top, max(left + 1, right), max(top + 1, bottom)
+    scale_x = width / sample_w
+    scale_y = height / sample_h
+    focus_side = side * scale_x
+    # Keep enough pixels that a full-screen cover does not turn the sun into a blur.
+    target = int(min(width, height, max(focus_side, MIN_CROP)))
+    left = max(0, min(width - target, int(round(center_x * scale_x - target / 2))))
+    top = max(0, min(height - target, int(round(center_y * scale_y - target / 2))))
+    return left, top, min(width, left + target), min(height, top + target)
 
 
 def _download(url: str) -> bytes:
@@ -234,11 +236,19 @@ def cropped_jpeg(index: int) -> bytes:
     if index < 0 or index >= len(_sources):
         raise IndexError(index)
     source = _sources[index]["url"]
-    try:
-        raw = _download(_thumb_url(source))
-    except urllib.error.HTTPError as error:
-        if error.code not in {400, 404}:
-            raise
+    raw = None
+    last_error: urllib.error.HTTPError | None = None
+    for width in THUMB_WIDTHS:
+        try:
+            raw = _download(_thumb_url(source, width))
+            break
+        except urllib.error.HTTPError as error:
+            last_error = error
+            if error.code not in {400, 404}:
+                raise
+    if raw is None:
+        if last_error is not None and last_error.code not in {400, 404}:
+            raise last_error
         raw = _download(source.split("?", 1)[0])
     try:
         with Image.open(io.BytesIO(raw)) as image:
@@ -292,7 +302,7 @@ def load_photos() -> list[dict]:
     with _crop_lock:
         _crops.clear()
     listed = [
-        {"url": f"/media/{index}?v=bright", "title": photo["title"], "page": photo["page"]}
+        {"url": f"/media/{index}?v=sun", "title": photo["title"], "page": photo["page"]}
         for index, photo in enumerate(photos)
     ]
     _cache["at"] = time.time()
