@@ -36,3 +36,25 @@ body {
 body.reduce-motion .bleed {
   transition: none;
 }
+
+.band {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2;
+  height: 12.5dvh;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  background: #3e3278;
+}
+
+.circle {
+  width: min(7dvh, 4.6vw);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: 2px solid rgba(246, 239, 230, 0.92);
+  background: transparent;
+  flex: 0 0 auto;
+}
