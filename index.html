@@ -7,46 +7,10 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <div class="stage" id="stage">
+    <div class="stage">
       <img class="bleed" id="frame-a" alt="" />
       <img class="bleed" id="frame-b" alt="" />
     </div>
-    <div class="scrim" aria-hidden="true"></div>
-
-    <div class="overlay">
-      <header class="hud">
-        <p class="eyebrow" id="when">Today</p>
-        <h1 id="place">San Francisco</h1>
-        <p class="coords" id="coords"></p>
-        <dl class="times">
-          <div>
-            <dt>Sunrise</dt>
-            <dd id="sunrise">—</dd>
-          </div>
-          <div>
-            <dt>Sunset</dt>
-            <dd id="sunset">—</dd>
-          </div>
-          <div>
-            <dt>Daylight</dt>
-            <dd id="daylight">—</dd>
-          </div>
-        </dl>
-        <p class="status" id="status" role="status"></p>
-        <div class="actions">
-          <button type="button" id="toggle" disabled>Play</button>
-          <button type="button" id="locate">Use my location</button>
-        </div>
-      </header>
-
-      <footer class="credit">
-        <p class="index" id="index"></p>
-        <p class="caption">
-          <a id="caption-link" target="_blank" rel="noopener noreferrer"></a>
-        </p>
-      </footer>
-    </div>
-
     <script src="app.js"></script>
   </body>
 </html>
