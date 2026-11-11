@@ -23,18 +23,88 @@ body {
   height: 100%;
   object-fit: cover;
   object-position: center;
-  opacity: 0;
-  transition: opacity 0.8s ease;
+  transform: translateX(100%);
+  transition: transform 0.56s ease;
   pointer-events: none;
   user-select: none;
 }
 
-.bleed.is-visible {
-  opacity: 1;
+.bleed.is-current {
+  transform: translateX(0);
+  z-index: 1;
 }
 
+.bleed.is-left {
+  transform: translateX(-100%);
+}
+
+.bleed.is-right {
+  transform: translateX(100%);
+}
+
+.bleed.is-incoming {
+  z-index: 2;
+}
+
+.bleed.is-instant,
 body.reduce-motion .bleed {
   transition: none;
+}
+
+.arrow {
+  position: fixed;
+  top: 43.75dvh;
+  z-index: 3;
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  padding: 0;
+  transform: translateY(-50%);
+  color: #f6efe6;
+  background: rgba(20, 12, 9, 0.34);
+  border: 2px solid rgba(246, 239, 230, 0.92);
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.arrow svg {
+  width: 28px;
+  height: 28px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.arrow-prev {
+  left: max(16px, 2vw);
+}
+
+.arrow-next {
+  right: max(16px, 2vw);
+}
+
+.arrow:hover {
+  background: rgba(20, 12, 9, 0.52);
+}
+
+.arrow:focus-visible {
+  outline: 2px solid #f6efe6;
+  outline-offset: 3px;
+}
+
+@media (max-width: 700px) {
+  .arrow {
+    width: 44px;
+    height: 44px;
+  }
+
+  .arrow svg {
+    width: 24px;
+    height: 24px;
+  }
 }
 
 .band {
