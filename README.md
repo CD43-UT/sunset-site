@@ -1,6 +1,6 @@
 # sunset site
 
-Full-bleed photographs from [Wikimedia Commons Category:Sunsets](https://commons.wikimedia.org/wiki/Category:Sunsets), cropped around the sun or the brightest area. Side arrows and the left and right arrow keys slide the previous or next photo into view. Nothing advances on its own. The bottom band fades from bluish purple to a darker purple.
+Full-bleed photographs from [Wikimedia Commons Category:Sunsets](https://commons.wikimedia.org/wiki/Category:Sunsets), cropped around the sun or the brightest area. Side arrows and the left and right arrow keys slide the previous or next photo into view. Nothing advances on its own. The bottom band fades from bluish purple to a darker purple. The first circle leaves the photo as it is. The other nine put a vision filter over the whole photo: dog, cat, monarch butterfly, honey bee, migratory birds, grasshopper, mantis shrimp, shark, and dragonfly.
 
 ```bash
 python3 server.py
