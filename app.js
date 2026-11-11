@@ -3,6 +3,8 @@ const SLIDE_MS = 560;
 const frames = [document.getElementById("frame-a"), document.getElementById("frame-b")];
 const prevButton = document.getElementById("prev");
 const nextButton = document.getElementById("next");
+const visionButtons = [...document.querySelectorAll(".circle")];
+const visionName = document.getElementById("vision-name");
 const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 
 let photos = [];
@@ -116,6 +118,34 @@ function showPhoto(index, direction) {
 function go(direction) {
   showPhoto(photoIndex + direction, direction);
 }
+
+const VISION_NAMES = {
+  dog: "Dog",
+  cat: "Cat",
+  monarch: "Monarch butterfly",
+  bee: "Honey bee",
+  bird: "Migratory birds",
+  grasshopper: "Grasshopper",
+  mantis: "Mantis shrimp",
+  shark: "Shark",
+  dragonfly: "Dragonfly",
+};
+
+function setVision(button) {
+  const vision = button.dataset.vision || "";
+  document.body.dataset.vision = vision;
+  visionButtons.forEach((item) => {
+    const on = item === button;
+    item.classList.toggle("is-on", on);
+    item.setAttribute("aria-pressed", on ? "true" : "false");
+  });
+  visionName.textContent = VISION_NAMES[vision] || "";
+  visionName.hidden = !vision;
+}
+
+visionButtons.forEach((button) => {
+  button.addEventListener("click", () => setVision(button));
+});
 
 prevButton.addEventListener("click", () => go(-1));
 nextButton.addEventListener("click", () => go(1));

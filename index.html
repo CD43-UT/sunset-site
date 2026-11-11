@@ -11,6 +11,96 @@
       <img class="bleed" id="frame-a" alt="" />
       <img class="bleed" id="frame-b" alt="" />
     </div>
+    <div class="vision-wash" id="vision-wash" aria-hidden="true"></div>
+    <svg class="vision-filters" aria-hidden="true">
+      <filter id="vision-dog" color-interpolation-filters="sRGB">
+        <feColorMatrix
+          type="matrix"
+          values="0.625 0.375 0 0 0
+                  0.700 0.300 0 0 0
+                  0.000 0.300 0.700 0 0
+                  0 0 0 1 0"
+        />
+      </filter>
+      <filter id="vision-cat" color-interpolation-filters="sRGB">
+        <feColorMatrix
+          type="matrix"
+          values="0.40 0.35 0.10 0 0.04
+                  0.30 0.40 0.12 0 0.04
+                  0.10 0.22 0.45 0 0.06
+                  0 0 0 1 0"
+        />
+        <feGaussianBlur stdDeviation="0.7" />
+      </filter>
+      <filter id="vision-monarch" color-interpolation-filters="sRGB">
+        <feColorMatrix
+          type="matrix"
+          values="0.95 0.08 0.22 0 0
+                  0.04 0.62 0.08 0 0
+                  0.28 0.06 1.05 0 0.03
+                  0 0 0 1 0"
+        />
+      </filter>
+      <filter id="vision-bee" color-interpolation-filters="sRGB">
+        <feColorMatrix
+          type="matrix"
+          values="0.05 0.22 0.00 0 0
+                  0.02 0.62 0.12 0 0
+                  0.35 0.28 0.85 0 0
+                  0 0 0 1 0"
+        />
+      </filter>
+      <filter id="vision-bird" color-interpolation-filters="sRGB">
+        <feColorMatrix
+          type="matrix"
+          values="1.35 -0.25 -0.05 0 0
+                  -0.15 1.30 -0.10 0 0
+                  -0.05 -0.20 1.45 0 0.02
+                  0 0 0 1 0"
+        />
+      </filter>
+      <filter id="vision-grasshopper" color-interpolation-filters="sRGB">
+        <feColorMatrix
+          type="matrix"
+          values="0.25 0.45 0.05 0 0
+                  0.12 0.78 0.05 0 0
+                  0.05 0.18 0.32 0 0
+                  0 0 0 1 0"
+        />
+        <feGaussianBlur stdDeviation="1.3" />
+      </filter>
+      <filter id="vision-mantis" color-interpolation-filters="sRGB">
+        <feComponentTransfer>
+          <feFuncR type="discrete" tableValues="0.05 0.28 0.55 0.82 1" />
+          <feFuncG type="discrete" tableValues="0.02 0.22 0.48 0.75 1" />
+          <feFuncB type="discrete" tableValues="0.08 0.30 0.58 0.84 1" />
+        </feComponentTransfer>
+      </filter>
+      <filter id="vision-shark" color-interpolation-filters="sRGB">
+        <feColorMatrix
+          type="matrix"
+          values="0.12 0.28 0.10 0 0
+                  0.18 0.42 0.22 0 0
+                  0.16 0.32 0.48 0 0
+                  0 0 0 1 0"
+        />
+        <feComponentTransfer>
+          <feFuncR type="linear" slope="1.45" intercept="-0.16" />
+          <feFuncG type="linear" slope="1.45" intercept="-0.16" />
+          <feFuncB type="linear" slope="1.45" intercept="-0.16" />
+        </feComponentTransfer>
+      </filter>
+      <filter id="vision-dragonfly" color-interpolation-filters="sRGB">
+        <feColorMatrix
+          type="matrix"
+          values="1.25 -0.15 0.05 0 0
+                  -0.10 1.20 -0.05 0 0
+                  0.05 -0.15 1.40 0 0.02
+                  0 0 0 1 0"
+        />
+        <feConvolveMatrix order="3" kernelMatrix="0 -0.3 0 -0.3 2.2 -0.3 0 -0.3 0" />
+      </filter>
+    </svg>
     <button class="arrow arrow-prev" id="prev" type="button" aria-label="Previous photo">
       <svg viewBox="0 0 24 24" aria-hidden="true">
         <path d="M14.5 5.5 8 12l6.5 6.5" />
@@ -21,17 +111,18 @@
         <path d="M9.5 5.5 16 12l-6.5 6.5" />
       </svg>
     </button>
-    <div class="band" aria-hidden="true">
-      <span class="circle"></span>
-      <span class="circle"></span>
-      <span class="circle"></span>
-      <span class="circle"></span>
-      <span class="circle"></span>
-      <span class="circle"></span>
-      <span class="circle"></span>
-      <span class="circle"></span>
-      <span class="circle"></span>
-      <span class="circle"></span>
+    <p class="vision-name" id="vision-name" hidden></p>
+    <div class="band">
+      <button class="circle is-on" type="button" data-vision="" aria-pressed="true" aria-label="Normal vision"></button>
+      <button class="circle vision-dog" type="button" data-vision="dog" aria-pressed="false" aria-label="Dog, yellow and blue" title="Dog"></button>
+      <button class="circle vision-cat" type="button" data-vision="cat" aria-pressed="false" aria-label="Cat, muted and soft" title="Cat"></button>
+      <button class="circle vision-monarch" type="button" data-vision="monarch" aria-pressed="false" aria-label="Monarch butterfly, ultraviolet and orange" title="Monarch butterfly"></button>
+      <button class="circle vision-bee" type="button" data-vision="bee" aria-pressed="false" aria-label="Honey bee, ultraviolet, blue, and green" title="Honey bee"></button>
+      <button class="circle vision-bird" type="button" data-vision="bird" aria-pressed="false" aria-label="Migratory birds, ultraviolet and richer color" title="Migratory birds"></button>
+      <button class="circle vision-grasshopper" type="button" data-vision="grasshopper" aria-pressed="false" aria-label="Grasshopper, coarse green facets" title="Grasshopper"></button>
+      <button class="circle vision-mantis" type="button" data-vision="mantis" aria-pressed="false" aria-label="Mantis shrimp, separate colors and polarized light" title="Mantis shrimp"></button>
+      <button class="circle vision-shark" type="button" data-vision="shark" aria-pressed="false" aria-label="Shark, blue-green contrast" title="Shark"></button>
+      <button class="circle vision-dragonfly" type="button" data-vision="dragonfly" aria-pressed="false" aria-label="Dragonfly, sharp ultraviolet color" title="Dragonfly"></button>
     </div>
     <script src="app.js"></script>
   </body>
