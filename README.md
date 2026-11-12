@@ -6,4 +6,4 @@ Full-bleed photographs from [Wikimedia Commons Category:Sunsets](https://commons
 python3 server.py
 ```
 
-Open http://127.0.0.1:8000. The server requests Category:Sunsets with a descriptive User-Agent, follows `continue.gcmcontinue`, and keeps URLs that respond as JPEG, PNG, WebP, or GIF. The right control and the Right arrow key slide the next photo in from the right. The left control and the Left arrow key slide the previous photo in from the left. `prefers-reduced-motion` swaps the photo without the slide.
+Open http://127.0.0.1:8000. The server requests Category:Sunsets with a descriptive User-Agent, follows `continue.gcmcontinue`, and keeps URLs that respond as JPEG, PNG, WebP, or GIF. Photo addresses are relative to the page. On a static host such as GitHub Pages, where `api/photos` is not available, the page asks Commons directly and shows those image responses. The right control and the Right arrow key slide the next photo in from the right. The left control and the Left arrow key slide the previous photo in from the left. `prefers-reduced-motion` swaps the photo without the slide.

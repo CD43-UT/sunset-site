@@ -302,7 +302,7 @@ def load_photos() -> list[dict]:
     with _crop_lock:
         _crops.clear()
     listed = [
-        {"url": f"/media/{index}?v=sun", "title": photo["title"], "page": photo["page"]}
+        {"url": f"media/{index}?v=sun", "title": photo["title"], "page": photo["page"]}
         for index, photo in enumerate(photos)
     ]
     _cache["at"] = time.time()
