@@ -50,6 +50,7 @@ function showPhoto(index, direction) {
   if (direction && (photos.length < 2 || nextIndex === photoIndex)) return;
 
   const photo = photos[nextIndex];
+  placePolar(nextIndex, document.body.dataset.vision || "");
   const token = ++generation;
   const incoming = frames[1 - front];
   const outgoing = frames[front];
@@ -131,9 +132,23 @@ const VISION_NAMES = {
   dragonfly: "Dragonfly",
 };
 
+const POLAR_BASE = { grasshopper: 24, mantis: 97, dragonfly: 153 };
+const POLAR_SHIFT = { grasshopper: 0, mantis: 9, dragonfly: 18 };
+
+function placePolar(index, vision) {
+  const wash = document.getElementById("vision-wash");
+  const base = POLAR_BASE[vision];
+  if (base == null) return;
+  const angle = (base + index * 29) % 180;
+  const shift = (index * 17 + POLAR_SHIFT[vision]) % 36;
+  wash.style.setProperty("--polar-angle", `${angle}deg`);
+  wash.style.setProperty("--polar-shift", `${shift}px`);
+}
+
 function setVision(button) {
   const vision = button.dataset.vision || "";
   document.body.dataset.vision = vision;
+  placePolar(photoIndex, vision);
   visionButtons.forEach((item) => {
     const on = item === button;
     item.classList.toggle("is-on", on);

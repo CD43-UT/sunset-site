@@ -58,20 +58,21 @@ body[data-vision="grasshopper"] .stage {
   filter: url("#vision-grasshopper");
 }
 
-body[data-vision="grasshopper"] .vision-wash {
-  opacity: 0.16;
-  background: repeating-linear-gradient(104deg, rgba(255, 255, 255, 0.7) 0 1px, transparent 1px 14px);
+body[data-vision="grasshopper"] .vision-wash,
+body[data-vision="mantis"] .vision-wash,
+body[data-vision="dragonfly"] .vision-wash {
+  opacity: 0.07;
+  background-image: repeating-linear-gradient(
+    var(--polar-angle, 40deg),
+    rgba(255, 255, 255, 0.4) 0 1px,
+    transparent 1px 28px
+  );
+  background-position: var(--polar-shift, 0px) 0;
   mix-blend-mode: overlay;
 }
 
 body[data-vision="mantis"] .stage {
   filter: url("#vision-mantis");
-}
-
-body[data-vision="mantis"] .vision-wash {
-  opacity: 0.2;
-  background: repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.75) 0 1px, transparent 1px 12px);
-  mix-blend-mode: overlay;
 }
 
 body[data-vision="shark"] .stage {
@@ -80,12 +81,6 @@ body[data-vision="shark"] .stage {
 
 body[data-vision="dragonfly"] .stage {
   filter: url("#vision-dragonfly");
-}
-
-body[data-vision="dragonfly"] .vision-wash {
-  opacity: 0.14;
-  background: repeating-linear-gradient(72deg, rgba(255, 255, 255, 0.7) 0 1px, transparent 1px 16px);
-  mix-blend-mode: overlay;
 }
 
 .vision-name {
