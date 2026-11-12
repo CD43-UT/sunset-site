@@ -16,89 +16,95 @@
       <filter id="vision-dog" color-interpolation-filters="sRGB">
         <feColorMatrix
           type="matrix"
-          values="0.625 0.375 0 0 0
-                  0.700 0.300 0 0 0
-                  0.000 0.300 0.700 0 0
+          values="0.42 0.42 0.16 0 0
+                  0.38 0.38 0.12 0 0
+                  0.16 0.16 0.68 0 0
                   0 0 0 1 0"
         />
+        <feComponentTransfer>
+          <feFuncR type="gamma" amplitude="1" exponent="0.82" offset="0.04" />
+          <feFuncG type="gamma" amplitude="1" exponent="0.82" offset="0.04" />
+          <feFuncB type="gamma" amplitude="1" exponent="0.82" offset="0.04" />
+        </feComponentTransfer>
       </filter>
       <filter id="vision-cat" color-interpolation-filters="sRGB">
         <feColorMatrix
           type="matrix"
-          values="0.40 0.35 0.10 0 0.04
-                  0.30 0.40 0.12 0 0.04
-                  0.10 0.22 0.45 0 0.06
+          values="0.22 0.20 0.20 0 0
+                  0.08 0.52 0.14 0 0
+                  0.10 0.16 0.68 0 0
                   0 0 0 1 0"
         />
-        <feGaussianBlur stdDeviation="0.7" />
+        <feComponentTransfer>
+          <feFuncR type="gamma" amplitude="1" exponent="0.78" offset="0.05" />
+          <feFuncG type="gamma" amplitude="1" exponent="0.78" offset="0.05" />
+          <feFuncB type="gamma" amplitude="1" exponent="0.78" offset="0.05" />
+        </feComponentTransfer>
       </filter>
       <filter id="vision-monarch" color-interpolation-filters="sRGB">
         <feColorMatrix
           type="matrix"
-          values="0.95 0.08 0.22 0 0
-                  0.04 0.62 0.08 0 0
-                  0.28 0.06 1.05 0 0.03
+          values="1.08 0.14 0.04 0 0
+                  0.02 1.16 0.02 0 0
+                  0.14 0.04 1.14 0 0.02
                   0 0 0 1 0"
         />
       </filter>
       <filter id="vision-bee" color-interpolation-filters="sRGB">
         <feColorMatrix
           type="matrix"
-          values="0.05 0.22 0.00 0 0
-                  0.02 0.62 0.12 0 0
-                  0.35 0.28 0.85 0 0
+          values="0.04 0.46 0.06 0 0
+                  0.01 0.62 0.10 0 0
+                  0.02 0.50 0.92 0 0
                   0 0 0 1 0"
         />
       </filter>
       <filter id="vision-bird" color-interpolation-filters="sRGB">
         <feColorMatrix
           type="matrix"
-          values="1.35 -0.25 -0.05 0 0
-                  -0.15 1.30 -0.10 0 0
-                  -0.05 -0.20 1.45 0 0.02
+          values="1.04 0.00 0.06 0 0
+                  0.00 1.04 0.04 0 0
+                  0.05 0.03 1.12 0 0.02
                   0 0 0 1 0"
         />
       </filter>
       <filter id="vision-grasshopper" color-interpolation-filters="sRGB">
         <feColorMatrix
           type="matrix"
-          values="0.25 0.45 0.05 0 0
-                  0.12 0.78 0.05 0 0
-                  0.05 0.18 0.32 0 0
+          values="0.34 0.10 0.06 0 0
+                  0.06 0.88 0.08 0 0
+                  0.08 0.10 0.78 0 0.03
                   0 0 0 1 0"
         />
-        <feGaussianBlur stdDeviation="1.3" />
       </filter>
       <filter id="vision-mantis" color-interpolation-filters="sRGB">
         <feComponentTransfer>
-          <feFuncR type="discrete" tableValues="0.05 0.28 0.55 0.82 1" />
-          <feFuncG type="discrete" tableValues="0.02 0.22 0.48 0.75 1" />
-          <feFuncB type="discrete" tableValues="0.08 0.30 0.58 0.84 1" />
+          <feFuncR type="discrete" tableValues="0.08 0.40 0.74 1" />
+          <feFuncG type="discrete" tableValues="0.05 0.36 0.70 1" />
+          <feFuncB type="discrete" tableValues="0.12 0.44 0.76 1" />
         </feComponentTransfer>
       </filter>
       <filter id="vision-shark" color-interpolation-filters="sRGB">
-        <feColorMatrix
-          type="matrix"
-          values="0.12 0.28 0.10 0 0
-                  0.18 0.42 0.22 0 0
-                  0.16 0.32 0.48 0 0
-                  0 0 0 1 0"
-        />
+        <feColorMatrix type="saturate" values="0" />
         <feComponentTransfer>
-          <feFuncR type="linear" slope="1.45" intercept="-0.16" />
-          <feFuncG type="linear" slope="1.45" intercept="-0.16" />
-          <feFuncB type="linear" slope="1.45" intercept="-0.16" />
+          <feFuncR type="gamma" amplitude="1" exponent="0.8" offset="0.03" />
+          <feFuncG type="gamma" amplitude="1" exponent="0.8" offset="0.03" />
+          <feFuncB type="gamma" amplitude="1" exponent="0.8" offset="0.03" />
+        </feComponentTransfer>
+        <feComponentTransfer>
+          <feFuncR type="linear" slope="1.18" intercept="-0.05" />
+          <feFuncG type="linear" slope="1.18" intercept="-0.05" />
+          <feFuncB type="linear" slope="1.18" intercept="-0.05" />
         </feComponentTransfer>
       </filter>
       <filter id="vision-dragonfly" color-interpolation-filters="sRGB">
         <feColorMatrix
           type="matrix"
-          values="1.25 -0.15 0.05 0 0
-                  -0.10 1.20 -0.05 0 0
-                  0.05 -0.15 1.40 0 0.02
+          values="1.16 0.04 0.02 0 0
+                  0.02 1.06 0.02 0 0
+                  0.08 0.03 1.18 0 0.02
                   0 0 0 1 0"
         />
-        <feConvolveMatrix order="3" kernelMatrix="0 -0.3 0 -0.3 2.2 -0.3 0 -0.3 0" />
       </filter>
     </svg>
     <button class="arrow arrow-prev" id="prev" type="button" aria-label="Previous photo">
@@ -114,15 +120,15 @@
     <p class="vision-name" id="vision-name" hidden></p>
     <div class="band">
       <button class="circle is-on" type="button" data-vision="" aria-pressed="true" aria-label="Normal vision"></button>
-      <button class="circle vision-dog" type="button" data-vision="dog" aria-pressed="false" aria-label="Dog, yellow and blue" title="Dog"></button>
-      <button class="circle vision-cat" type="button" data-vision="cat" aria-pressed="false" aria-label="Cat, muted and soft" title="Cat"></button>
-      <button class="circle vision-monarch" type="button" data-vision="monarch" aria-pressed="false" aria-label="Monarch butterfly, ultraviolet and orange" title="Monarch butterfly"></button>
-      <button class="circle vision-bee" type="button" data-vision="bee" aria-pressed="false" aria-label="Honey bee, ultraviolet, blue, and green" title="Honey bee"></button>
-      <button class="circle vision-bird" type="button" data-vision="bird" aria-pressed="false" aria-label="Migratory birds, ultraviolet and richer color" title="Migratory birds"></button>
-      <button class="circle vision-grasshopper" type="button" data-vision="grasshopper" aria-pressed="false" aria-label="Grasshopper, coarse green facets" title="Grasshopper"></button>
-      <button class="circle vision-mantis" type="button" data-vision="mantis" aria-pressed="false" aria-label="Mantis shrimp, separate colors and polarized light" title="Mantis shrimp"></button>
-      <button class="circle vision-shark" type="button" data-vision="shark" aria-pressed="false" aria-label="Shark, blue-green contrast" title="Shark"></button>
-      <button class="circle vision-dragonfly" type="button" data-vision="dragonfly" aria-pressed="false" aria-label="Dragonfly, sharp ultraviolet color" title="Dragonfly"></button>
+      <button class="circle vision-dog" type="button" data-vision="dog" aria-pressed="false" aria-label="Dog, blue, yellow, and gray" title="Dog"></button>
+      <button class="circle vision-cat" type="button" data-vision="cat" aria-pressed="false" aria-label="Cat, blue, green, and yellow" title="Cat"></button>
+      <button class="circle vision-monarch" type="button" data-vision="monarch" aria-pressed="false" aria-label="Monarch butterfly, ultraviolet, blue, green, and orange" title="Monarch butterfly"></button>
+      <button class="circle vision-bee" type="button" data-vision="bee" aria-pressed="false" aria-label="Honey bee, reds dark, with ultraviolet, blue, and green" title="Honey bee"></button>
+      <button class="circle vision-bird" type="button" data-vision="bird" aria-pressed="false" aria-label="Migratory birds, visible light and ultraviolet" title="Migratory birds"></button>
+      <button class="circle vision-grasshopper" type="button" data-vision="grasshopper" aria-pressed="false" aria-label="Grasshopper, ultraviolet, blue, and green" title="Grasshopper"></button>
+      <button class="circle vision-mantis" type="button" data-vision="mantis" aria-pressed="false" aria-label="Mantis shrimp, unblended colors and polarized light" title="Mantis shrimp"></button>
+      <button class="circle vision-shark" type="button" data-vision="shark" aria-pressed="false" aria-label="Shark, black, white, and gray" title="Shark"></button>
+      <button class="circle vision-dragonfly" type="button" data-vision="dragonfly" aria-pressed="false" aria-label="Dragonfly, ultraviolet to near infrared, polarized light" title="Dragonfly"></button>
     </div>
     <script src="app.js"></script>
   </body>

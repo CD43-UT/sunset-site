@@ -47,8 +47,8 @@ body[data-vision="monarch"] .stage {
 }
 
 body[data-vision="monarch"] .vision-wash {
-  opacity: 0.28;
-  background: radial-gradient(circle at 50% 42%, rgba(130, 50, 255, 0.85), transparent 58%);
+  opacity: 0.16;
+  background: radial-gradient(circle at 50% 36%, rgba(138, 70, 255, 0.8), transparent 52%);
   mix-blend-mode: screen;
 }
 
@@ -60,15 +60,24 @@ body[data-vision="bird"] .stage {
   filter: url("#vision-bird");
 }
 
+body[data-vision="bird"] .vision-wash {
+  opacity: 0.14;
+  background: radial-gradient(circle at 50% 28%, rgba(156, 96, 255, 0.75), transparent 60%);
+  mix-blend-mode: screen;
+}
+
 body[data-vision="grasshopper"] .stage {
   filter: url("#vision-grasshopper");
 }
 
 body[data-vision="grasshopper"] .vision-wash {
-  opacity: 0.62;
-  background-image: radial-gradient(circle at center, rgba(0, 0, 0, 0.72) 0 1px, transparent 1.7px);
-  background-size: 8px 8px;
-  mix-blend-mode: multiply;
+  opacity: 0.32;
+  background: repeating-linear-gradient(
+    104deg,
+    rgba(86, 112, 255, 0.55) 0 2px,
+    transparent 2px 16px
+  );
+  mix-blend-mode: color;
 }
 
 body[data-vision="mantis"] .stage {
@@ -76,10 +85,13 @@ body[data-vision="mantis"] .stage {
 }
 
 body[data-vision="mantis"] .vision-wash {
-  opacity: 0.5;
-  background: conic-gradient(#ff3d8a, #ffe14a, #3dff9a, #3ecbff, #9b5cff, #ff3d8a);
-  mix-blend-mode: color;
-  animation: polarization 18s linear infinite;
+  opacity: 0.55;
+  background: repeating-linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.8) 0 1px,
+    transparent 1px 11px
+  );
+  mix-blend-mode: overlay;
 }
 
 body[data-vision="shark"] .stage {
@@ -91,23 +103,15 @@ body[data-vision="dragonfly"] .stage {
 }
 
 body[data-vision="dragonfly"] .vision-wash {
-  opacity: 0.22;
-  background-image: repeating-linear-gradient(
-    112deg,
-    transparent 0 4px,
-    rgba(130, 230, 255, 0.55) 4px 5px
+  opacity: 0.34;
+  background: repeating-linear-gradient(
+    72deg,
+    rgba(124, 48, 255, 0.7) 0 2px,
+    transparent 2px 12px,
+    rgba(168, 18, 42, 0.65) 12px 14px,
+    transparent 14px 26px
   );
   mix-blend-mode: screen;
-}
-
-body.reduce-motion .vision-wash {
-  animation: none;
-}
-
-@keyframes polarization {
-  to {
-    transform: rotate(1turn);
-  }
 }
 
 .vision-name {
@@ -294,8 +298,8 @@ body.reduce-motion .bleed {
 }
 
 .vision-shark {
-  --vision: #3ec6c0;
-  border-color: #3ec6c0;
+  --vision: #d7d7de;
+  border-color: #d7d7de;
 }
 
 .vision-dragonfly {
