@@ -7,12 +7,33 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <iframe
-      class="sunset"
-      src="https://www.livesunset.io/#fort-william-scotland-204"
-      title="Fort William, Scotland on LiveSunset"
-      allow="autoplay; fullscreen; picture-in-picture"
-    ></iframe>
-    <div class="band"></div>
+    <div class="stage">
+      <video
+        id="picture"
+        crossorigin="anonymous"
+        src="https://upload.wikimedia.org/wikipedia/commons/c/c6/Sunset_in_Pantai_Kukup.webm"
+        autoplay
+        muted
+        loop
+        playsinline
+        aria-label="Sunset at Pantai Kukup"
+      ></video>
+      <canvas id="frame"></canvas>
+    </div>
+    <div class="vision-wash" id="vision-wash" aria-hidden="true"></div>
+    <p class="vision-name" id="vision-name" hidden></p>
+    <div class="band">
+      <button class="circle is-on" type="button" data-vision="" aria-pressed="true" aria-label="Normal vision"></button>
+      <button class="circle vision-dog" type="button" data-vision="dog" aria-pressed="false" aria-label="Dog, blue, yellow, and gray" title="Dog"></button>
+      <button class="circle vision-cat" type="button" data-vision="cat" aria-pressed="false" aria-label="Cat, blue, green, and yellow" title="Cat"></button>
+      <button class="circle vision-monarch" type="button" data-vision="monarch" aria-pressed="false" aria-label="Monarch butterfly, ultraviolet, blue, green, and orange" title="Monarch butterfly"></button>
+      <button class="circle vision-bee" type="button" data-vision="bee" aria-pressed="false" aria-label="Honey bee, reds dark, with ultraviolet, blue, and green" title="Honey bee"></button>
+      <button class="circle vision-bird" type="button" data-vision="bird" aria-pressed="false" aria-label="Migratory birds, visible light and ultraviolet" title="Migratory birds"></button>
+      <button class="circle vision-grasshopper" type="button" data-vision="grasshopper" aria-pressed="false" aria-label="Grasshopper, ultraviolet, blue, and green" title="Grasshopper"></button>
+      <button class="circle vision-mantis" type="button" data-vision="mantis" aria-pressed="false" aria-label="Mantis shrimp, unblended colors and polarized light" title="Mantis shrimp"></button>
+      <button class="circle vision-shark" type="button" data-vision="shark" aria-pressed="false" aria-label="Shark, black, white, and gray" title="Shark"></button>
+      <button class="circle vision-dragonfly" type="button" data-vision="dragonfly" aria-pressed="false" aria-label="Dragonfly, ultraviolet to near infrared, polarized light" title="Dragonfly"></button>
+    </div>
+    <script src="app.js"></script>
   </body>
 </html>
