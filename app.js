@@ -4,6 +4,8 @@ const visionButtons = [...document.querySelectorAll(".circle")];
 const visionName = document.getElementById("vision-name");
 const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 const video = document.getElementById("picture");
+const canvas = document.getElementById("frame");
+const ctx = canvas.getContext("2d", { alpha: false });
 
 const VISION_NAMES = {
   dog: "Dog",
@@ -80,6 +82,32 @@ function startVideo() {
 if (video.getAttribute("src") !== VIDEO_URL) {
   video.src = VIDEO_URL;
 }
+video.crossOrigin = "anonymous";
+
+function paintFrame() {
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const cssWidth = canvas.clientWidth;
+  const cssHeight = canvas.clientHeight;
+  const pixelWidth = Math.max(1, Math.round(cssWidth * dpr));
+  const pixelHeight = Math.max(1, Math.round(cssHeight * dpr));
+  if (canvas.width !== pixelWidth || canvas.height !== pixelHeight) {
+    canvas.width = pixelWidth;
+    canvas.height = pixelHeight;
+  }
+  const frameWidth = video.videoWidth;
+  const frameHeight = video.videoHeight;
+  if (frameWidth && frameHeight && video.readyState >= 2) {
+    const scale = Math.max(pixelWidth / frameWidth, pixelHeight / frameHeight);
+    const destWidth = frameWidth * scale;
+    const destHeight = frameHeight * scale;
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = "high";
+    ctx.drawImage(video, (pixelWidth - destWidth) / 2, (pixelHeight - destHeight) / 2, destWidth, destHeight);
+  }
+  window.requestAnimationFrame(paintFrame);
+}
+
 video.addEventListener("canplay", startVideo);
 startVideo();
 tickPolar();
+paintFrame();
