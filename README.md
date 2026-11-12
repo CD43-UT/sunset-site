@@ -1,9 +1,9 @@
 # sunset site
 
-Full-bleed looping sunset from the Wikimedia Commons video [Sunset in Pantai Kukup](https://upload.wikimedia.org/wikipedia/commons/c/c6/Sunset_in_Pantai_Kukup.webm) (`video/webm`, 1920×1080). The Fort William webcam on [LiveSunset](https://www.livesunset.io/#fort-william-scotland-204) is a YouTube embed that asks for a sign-in before it will play, and the public storyboard of that stream is only about 160×90. The bottom band fades from bluish purple to a darker purple. The first circle leaves the picture as it is. The other nine put a vision filter over the moving picture: dog, cat, monarch butterfly, honey bee, migratory birds, grasshopper, mantis shrimp, shark, and dragonfly. Grasshopper, mantis shrimp, and dragonfly also draw faint polarization lines that shift with the video.
+Full-bleed view of [LiveSunset’s Fort William page](https://www.livesunset.io/#fort-william-scotland-204). The site allows embedding, so that page is shown in place. LiveSunset only plays a camera while it is inside the sunset window, and otherwise shows the sunset it has live. A purple band sits over the bottom. The animal-vision circles are gone, because a filter cannot recolor a page from another site.
 
 ```bash
 python3 server.py
 ```
 
-Open http://127.0.0.1:8000. `prefers-reduced-motion` steps the polarization lines instead of drifting them.
+Open http://127.0.0.1:8000.
