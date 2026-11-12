@@ -11,12 +11,118 @@ body {
   background: #140c09;
 }
 
-.sunset {
+.stage {
   position: fixed;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.vision-filters {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+
+.vision-wash {
+  position: fixed;
+  left: -30%;
+  top: -30%;
+  z-index: 1;
+  width: 160%;
+  height: 160%;
+  pointer-events: none;
+  opacity: 0;
+}
+
+body[data-vision="dog"] .stage canvas {
+  filter: sepia(0.9) saturate(2.4) hue-rotate(8deg) contrast(1.12) brightness(1.16);
+}
+
+body[data-vision="cat"] .stage canvas {
+  filter: hue-rotate(55deg) saturate(0.75) contrast(1.05) brightness(1.22);
+}
+
+body[data-vision="monarch"] .stage canvas {
+  filter: saturate(1.85) hue-rotate(335deg) contrast(1.12);
+}
+
+body[data-vision="bee"] .stage canvas {
+  filter: hue-rotate(200deg) saturate(2.6) contrast(1.35) brightness(0.9);
+}
+
+body[data-vision="bird"] .stage canvas {
+  filter: saturate(1.45) hue-rotate(348deg) contrast(1.08);
+}
+
+body[data-vision="grasshopper"] .stage canvas {
+  filter: hue-rotate(85deg) saturate(1.7) contrast(1.08);
+}
+
+body[data-vision="grasshopper"] .vision-wash,
+body[data-vision="mantis"] .vision-wash,
+body[data-vision="dragonfly"] .vision-wash {
+  opacity: 0.07;
+  background-image: repeating-linear-gradient(
+    var(--polar-angle, 40deg),
+    rgba(255, 255, 255, 0.4) 0 1px,
+    transparent 1px 28px
+  );
+  background-position: var(--polar-shift, 0px) 0;
+  mix-blend-mode: overlay;
+}
+
+body[data-vision="mantis"] .stage canvas {
+  filter: saturate(2.4) contrast(1.9) brightness(1.04);
+}
+
+body[data-vision="shark"] .stage canvas {
+  filter: grayscale(1) contrast(1.5) brightness(1.16);
+}
+
+body[data-vision="dragonfly"] .stage canvas {
+  filter: saturate(1.9) hue-rotate(342deg) contrast(1.18);
+}
+
+.vision-name {
+  position: fixed;
+  left: 50%;
+  bottom: calc(12.5dvh + 0.45rem);
+  z-index: 3;
+  width: max-content;
+  max-width: calc(100% - 2rem);
+  margin: 0;
+  padding: 0.28rem 0.75rem;
+  transform: translateX(-50%);
+  border-radius: 999px;
+  background: rgba(20, 12, 9, 0.62);
+  text-align: center;
+  font: 600 0.85rem/1.2 system-ui, sans-serif;
+  letter-spacing: 0.03em;
+  color: #f6efe6;
+  pointer-events: none;
+}
+
+.vision-name[hidden] {
+  display: none;
+}
+
+.stage video,
+.stage canvas {
+  position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
-  border: 0;
+  pointer-events: none;
+}
+
+.stage video {
+  object-fit: cover;
+}
+
+.stage canvas {
+  z-index: 1;
 }
 
 .band {
@@ -26,6 +132,75 @@ body {
   bottom: 0;
   z-index: 2;
   height: 12.5dvh;
-  pointer-events: none;
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
   background: linear-gradient(to bottom, #3e3278, #1d163b);
+}
+
+.circle {
+  width: min(7dvh, 4.6vw);
+  min-width: 0;
+  aspect-ratio: 1;
+  padding: 0;
+  border-radius: 50%;
+  border: 2px solid rgba(246, 239, 230, 0.92);
+  background: transparent;
+  flex: 0 0 auto;
+  cursor: pointer;
+}
+
+.circle:focus-visible {
+  outline: 2px solid #f6efe6;
+  outline-offset: 3px;
+}
+
+.circle.is-on {
+  background: var(--vision, rgba(246, 239, 230, 0.92));
+}
+
+.vision-dog {
+  --vision: #e2c15a;
+  border-color: #e2c15a;
+}
+
+.vision-cat {
+  --vision: #9aa58a;
+  border-color: #9aa58a;
+}
+
+.vision-monarch {
+  --vision: #e07a2f;
+  border-color: #e07a2f;
+}
+
+.vision-bee {
+  --vision: #f0c43a;
+  border-color: #f0c43a;
+}
+
+.vision-bird {
+  --vision: #7eb6ff;
+  border-color: #7eb6ff;
+}
+
+.vision-grasshopper {
+  --vision: #7dbe4a;
+  border-color: #7dbe4a;
+}
+
+.vision-mantis {
+  --vision: #ff5ad1;
+  border-color: #ff5ad1;
+}
+
+.vision-shark {
+  --vision: #d7d7de;
+  border-color: #d7d7de;
+}
+
+.vision-dragonfly {
+  --vision: #5ee0ff;
+  border-color: #5ee0ff;
 }
