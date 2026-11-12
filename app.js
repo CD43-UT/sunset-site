@@ -167,9 +167,6 @@ reduceMotion.addEventListener("change", (event) => {
   document.body.classList.toggle("reduce-motion", event.matches);
 });
 
-const COMMONS_API = "https://commons.wikimedia.org/w/api.php";
-const ALLOWED_TYPES = new Set(["image/jpeg", "image/png", "image/webp", "image/gif"]);
-
 function photoRecord(photo) {
   if (!photo || !photo.url) return null;
   return {
@@ -178,54 +175,11 @@ function photoRecord(photo) {
   };
 }
 
-async function loadFromApi() {
-  const response = await fetch(new URL("api/photos", document.baseURI));
+async function loadPhotos() {
+  const response = await fetch(new URL("photos.json", document.baseURI));
   const data = await response.json().catch(() => ({}));
   if (!response.ok) throw new Error(data.error || `Photo request failed (${response.status})`);
-  return (data.photos || []).map(photoRecord).filter(Boolean);
-}
-
-async function loadFromCommons() {
-  const found = [];
-  let continueToken = "";
-  for (let page = 0; page < 6 && found.length < 40; page += 1) {
-    const params = new URLSearchParams({
-      action: "query",
-      format: "json",
-      formatversion: "2",
-      origin: "*",
-      generator: "categorymembers",
-      gcmtitle: "Category:Sunsets",
-      gcmtype: "file",
-      gcmlimit: "20",
-      prop: "imageinfo",
-      iiprop: "url|mime",
-      maxlag: "5",
-    });
-    if (continueToken) params.set("gcmcontinue", continueToken);
-    const response = await fetch(`${COMMONS_API}?${params}`);
-    const data = await response.json().catch(() => ({}));
-    if (!response.ok || data.error) throw new Error(data.error?.info || "Commons request failed");
-    for (const item of data.query?.pages || []) {
-      const info = (item.imageinfo || [])[0] || {};
-      if (!ALLOWED_TYPES.has(info.mime) || !info.url) continue;
-      const record = photoRecord({ url: info.url, title: item.title });
-      if (record) found.push(record);
-      if (found.length >= 40) break;
-    }
-    continueToken = data.continue?.gcmcontinue || "";
-    if (!continueToken) break;
-  }
-  return found;
-}
-
-async function loadPhotos() {
-  try {
-    photos = await loadFromApi();
-  } catch {
-    photos = [];
-  }
-  if (!photos.length) photos = await loadFromCommons();
+  photos = (data.photos || []).map(photoRecord).filter(Boolean);
   if (!photos.length) throw new Error("No sunset photographs were returned.");
   showPhoto(0, 0);
 }
