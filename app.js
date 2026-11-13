@@ -24,7 +24,7 @@ const VISION_NAMES = {
   dragonfly: "Dragonfly",
 };
 
-const POLAR_BASE = { grasshopper: 24, mantis: 97, dragonfly: 153 };
+const POLAR_BASE = { grasshopper: 24, mantis: 97, dragonfly: 132 };
 const POLAR_SHIFT = { grasshopper: 0, mantis: 9, dragonfly: 18 };
 
 const RAD = Math.PI / 180;
@@ -37,6 +37,7 @@ let cameras = [];
 let cameraIndex = 0;
 let frameCount = 0;
 let shownUrl = "";
+let paintedClient = "";
 
 if (reduceMotion.matches) {
   document.body.classList.add("reduce-motion");
@@ -144,8 +145,9 @@ function chooseCameras(items) {
 
 function paint(image) {
   const dpr = Math.min(window.devicePixelRatio || 1, 2);
-  const pixelWidth = Math.max(1, Math.round(canvas.clientWidth * dpr));
-  const pixelHeight = Math.max(1, Math.round(canvas.clientHeight * dpr));
+  const pixelWidth = Math.round(canvas.clientWidth * dpr);
+  const pixelHeight = Math.round(canvas.clientHeight * dpr);
+  if (pixelWidth < 2 || pixelHeight < 2) return false;
   if (canvas.width !== pixelWidth || canvas.height !== pixelHeight) {
     canvas.width = pixelWidth;
     canvas.height = pixelHeight;
@@ -156,6 +158,20 @@ function paint(image) {
   ctx.imageSmoothingEnabled = true;
   ctx.imageSmoothingQuality = "high";
   ctx.drawImage(image, (pixelWidth - destWidth) / 2, (pixelHeight - destHeight) / 2, destWidth, destHeight);
+  paintedClient = `${canvas.clientWidth}x${canvas.clientHeight}`;
+  return true;
+}
+
+function averageLuma(image) {
+  const sample = document.createElement("canvas");
+  sample.width = 32;
+  sample.height = 18;
+  const sampleCtx = sample.getContext("2d", { alpha: false });
+  sampleCtx.drawImage(image, 0, 0, sample.width, sample.height);
+  const data = sampleCtx.getImageData(0, 0, sample.width, sample.height).data;
+  let sum = 0;
+  for (let i = 0; i < data.length; i += 4) sum += data[i] + data[i + 1] + data[i + 2];
+  return sum / (sample.width * sample.height * 3);
 }
 
 function loadImage(url) {
@@ -168,23 +184,27 @@ function loadImage(url) {
 }
 
 async function showFrame(url) {
-  const response = await fetch(url, { cache: "no-store" });
-  if (!response.ok) return false;
-  const type = response.headers.get("content-type") || "";
-  if (!type.startsWith("image/")) return false;
-  const blob = await response.blob();
-  const objectUrl = URL.createObjectURL(blob);
+  if (!url) return false;
   try {
-    const image = await loadImage(objectUrl);
-    if (!image.naturalWidth) return false;
-    paint(image);
-    frameCount += 1;
-    shownUrl = url;
-    return true;
+    const response = await fetch(url, { cache: "no-store" });
+    if (!response.ok) return false;
+    const type = response.headers.get("content-type") || "";
+    if (!type.startsWith("image/")) return false;
+    const blob = await response.blob();
+    const objectUrl = URL.createObjectURL(blob);
+    try {
+      const image = await loadImage(objectUrl);
+      if (!image.naturalWidth || !image.naturalHeight) return false;
+      if (averageLuma(image) < 12) return false;
+      if (!paint(image)) return false;
+      frameCount += 1;
+      shownUrl = url;
+      return true;
+    } finally {
+      URL.revokeObjectURL(objectUrl);
+    }
   } catch (error) {
     return false;
-  } finally {
-    URL.revokeObjectURL(objectUrl);
   }
 }
 
@@ -206,6 +226,7 @@ function showEmpty(message) {
   cameras = [];
   cameraIndex = 0;
   shownUrl = "";
+  paintedClient = "";
   showCredit(null);
   empty.hidden = false;
   empty.textContent = message;
@@ -220,7 +241,6 @@ async function showCurrent(attempt = 0) {
     showEmpty("No cameras are near sunset right now.");
     return;
   }
-  empty.hidden = true;
   showCredit(camera);
   const several = cameras.length > 1;
   prevButton.hidden = !several;
@@ -230,7 +250,9 @@ async function showCurrent(attempt = 0) {
     cameras.splice(cameraIndex, 1);
     if (cameraIndex >= cameras.length) cameraIndex = 0;
     await showCurrent(attempt + 1);
+    return;
   }
+  empty.hidden = true;
 }
 
 function stepCamera(delta) {
@@ -248,6 +270,11 @@ window.addEventListener("keydown", (event) => {
 window.addEventListener("resize", () => {
   if (shownUrl) showFrame(shownUrl);
 });
+new ResizeObserver(() => {
+  const next = `${canvas.clientWidth}x${canvas.clientHeight}`;
+  if (!shownUrl || canvas.clientWidth < 3 || next === paintedClient) return;
+  showFrame(shownUrl);
+}).observe(canvas);
 
 async function refreshCameras() {
   try {

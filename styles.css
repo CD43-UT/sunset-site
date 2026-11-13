@@ -15,7 +15,6 @@ body {
   position: absolute;
   width: 0;
   height: 0;
-  overflow: hidden;
 }
 
 .stage {
@@ -36,6 +35,7 @@ body {
 .empty {
   position: absolute;
   inset: 0 0 12.5dvh;
+  z-index: 1;
   display: grid;
   place-items: center;
   margin: 0;
@@ -107,14 +107,38 @@ body {
 body[data-vision="grasshopper"] .vision-wash,
 body[data-vision="mantis"] .vision-wash,
 body[data-vision="dragonfly"] .vision-wash {
-  opacity: 0.07;
-  background-image: repeating-linear-gradient(
-    var(--polar-angle, 40deg),
-    rgba(255, 255, 255, 0.4) 0 1px,
-    transparent 1px 28px
-  );
   background-position: var(--polar-shift, 0px) 0;
   mix-blend-mode: overlay;
+}
+
+body[data-vision="grasshopper"] .vision-wash {
+  opacity: 0.36;
+  mix-blend-mode: normal;
+  background-image: repeating-linear-gradient(
+    var(--polar-angle, 24deg),
+    rgba(255, 255, 255, 0.85) 0 1px,
+    transparent 1px 26px
+  );
+}
+
+body[data-vision="mantis"] .vision-wash {
+  opacity: 0.42;
+  mix-blend-mode: normal;
+  background-image: repeating-linear-gradient(
+    var(--polar-angle, 96deg),
+    rgba(255, 255, 255, 0.95) 0 2px,
+    transparent 2px 18px
+  );
+}
+
+body[data-vision="dragonfly"] .vision-wash {
+  opacity: 0.5;
+  mix-blend-mode: normal;
+  background-image: repeating-linear-gradient(
+    var(--polar-angle, 132deg),
+    rgba(255, 255, 255, 0.92) 0 2px,
+    transparent 2px 20px
+  );
 }
 
 .vision-name {
