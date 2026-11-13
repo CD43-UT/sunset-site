@@ -2,7 +2,7 @@
 
 Live video from public cameras in the [Live Environment Streams](https://github.com/willytop8/Live-Environment-Streams) catalog. A camera is shown only when its direct HLS or MJPEG stream is playing and the sun at its latitude and longitude is about to set: sunset is within the next hour, or the sun is already between sunset and the end of civil twilight. Finite MP4 files that do not keep updating are skipped. Sunset times use the same solar geometry as [sunrise-sunset.org](https://api.sunrise-sunset.org/json). If more than one camera matches, the side arrows and the left and right keys move between them. If none match, the page says so.
 
-Each frame is drawn onto a canvas. The ten circles remap those pixels: the first leaves the picture as it is, and the other nine are dog, cat, monarch butterfly, honey bee, migratory birds, grasshopper, mantis shrimp, shark, and dragonfly. The whole frame stays visible, with bars if the screen is a different shape. The ten circles sit on the picture. Grasshopper, mantis shrimp, and dragonfly also draw faint polarization lines. `prefers-reduced-motion` steps those lines.
+Each frame is drawn onto a canvas. The ten circles remap those pixels: the first leaves the picture as it is, and the other nine are dog, cat, monarch butterfly, honey bee, migratory birds, grasshopper, mantis shrimp, shark, and dragonfly. The picture is scaled to the width of the screen, keeping its shape. If that makes it taller than the screen, the extra is centered and clipped at the top and bottom. The ten circles sit on the picture. Grasshopper, mantis shrimp, and dragonfly also draw faint polarization lines. `prefers-reduced-motion` steps those lines.
 
 ```bash
 python3 server.py
