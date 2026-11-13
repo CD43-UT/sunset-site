@@ -3,6 +3,7 @@ const HOUR_MS = 60 * 60 * 1000;
 
 // Public HLS cameras added where the catalog's longitudes leave a gap in the sunset window.
 const EXTRA_CAMERAS = [
+  { name: "Kasitsna Bay", lat: 59.4684, lon: -151.5525, url: "https://stage-ams.srv.axds.co/stream/adaptive/aoos/kasitsna_dock/hls.m3u8", attribution: "AOOS / Kasitsna Bay Laboratory" },
   { name: "East Auckland", lat: -36.781, lon: 174.994, url: "https://s127.ipcamlive.com/streams/7fw6t1rpgfzojagvk/stream.m3u8", attribution: "New Plymouth Sport Fishing and Underwater Club" },
   { name: "Plantation Island, Malolo Lailai", lat: -17.783, lon: 177.158, url: "https://s107.ipcamlive.com/streams/6bjsxqxujpac6chnm/stream.m3u8", attribution: "Plantation Island Resort" },
   { name: "Fa'a'ā Airport, Tahiti", lat: -17.559, lon: -149.608, url: "https://s81.ipcamlive.com/streams/51lrjb7qwnfa342ex/stream.m3u8", attribution: "Fa'a'ā International Airport" },
