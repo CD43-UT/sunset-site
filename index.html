@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Sunset</title>
-    <link rel="stylesheet" href="styles.css?v=27" />
+    <link rel="stylesheet" href="styles.css?v=28" />
     <style>
       .band {
         display: none !important;
@@ -12,8 +12,67 @@
         background-image: none !important;
       }
       .controls {
+        display: none !important;
         background: none !important;
         background-image: none !important;
+      }
+      .vision-fan {
+        position: fixed;
+        left: 0.85rem;
+        bottom: 0.85rem;
+        z-index: 5;
+        width: min(7dvh, 6.5vw);
+        height: min(7dvh, 6.5vw);
+        --size: min(7dvh, 6.5vw);
+        --radius: min(calc(var(--size) * 6.4), calc(100vw - var(--size) - 2.4rem), calc(100dvh - var(--size) - 2.4rem));
+      }
+      .corner {
+        position: relative;
+        z-index: 3;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+        padding: 0;
+        border: 0 !important;
+        border-radius: 50%;
+        background-color: rgba(246, 239, 230, 0.3) !important;
+        color: #f6efe6;
+        line-height: 0;
+        cursor: pointer;
+      }
+      .corner svg {
+        display: block;
+        width: 46%;
+        height: 46%;
+        margin: 0;
+      }
+      .vision-fan[data-vision="dog"] .corner { background-color: rgba(226, 193, 90, 0.3) !important; }
+      .vision-fan[data-vision="cat"] .corner { background-color: rgba(154, 165, 138, 0.3) !important; }
+      .vision-fan[data-vision="monarch"] .corner { background-color: rgba(224, 122, 47, 0.3) !important; }
+      .vision-fan[data-vision="bee"] .corner { background-color: rgba(240, 196, 58, 0.3) !important; }
+      .vision-fan[data-vision="bird"] .corner { background-color: rgba(126, 182, 255, 0.3) !important; }
+      .vision-fan[data-vision="grasshopper"] .corner { background-color: rgba(125, 190, 74, 0.3) !important; }
+      .vision-fan[data-vision="mantis"] .corner { background-color: rgba(255, 90, 209, 0.3) !important; }
+      .vision-fan[data-vision="shark"] .corner { background-color: rgba(215, 215, 222, 0.3) !important; }
+      .vision-fan[data-vision="dragonfly"] .corner { background-color: rgba(94, 224, 255, 0.3) !important; }
+      .vision-list .circle {
+        position: absolute;
+        z-index: 2;
+        left: 50%;
+        top: 50%;
+        width: var(--size);
+        height: var(--size);
+        margin: calc(var(--size) / -2) 0 0 calc(var(--size) / -2);
+        opacity: 0;
+        pointer-events: none;
+        transform: rotate(calc(var(--i) * -10deg)) translateX(0) rotate(calc(var(--i) * 10deg));
+      }
+      .vision-fan:is(:hover, :focus-within, .is-open, .is-hot):not(.is-shut) .circle {
+        opacity: 1;
+        pointer-events: auto;
+        transform: rotate(calc(var(--i) * -10deg)) translateX(var(--radius)) rotate(calc(var(--i) * 10deg));
       }
       .circle {
         border: 0 !important;
@@ -123,19 +182,24 @@
     </button>
     <div class="vision-wash" id="vision-wash" aria-hidden="true"></div>
     <p class="vision-name" id="vision-name" hidden></p>
-    <div class="controls">
-      <button class="circle is-on" type="button" data-vision="" aria-pressed="true" aria-label="Normal vision"></button>
-      <button class="circle vision-dog" type="button" data-vision="dog" aria-pressed="false" aria-label="Dog, blue, yellow, and gray" title="Dog"></button>
-      <button class="circle vision-cat" type="button" data-vision="cat" aria-pressed="false" aria-label="Cat, blue, green, and yellow" title="Cat"></button>
-      <button class="circle vision-monarch" type="button" data-vision="monarch" aria-pressed="false" aria-label="Monarch butterfly, ultraviolet, blue, green, and orange" title="Monarch butterfly"></button>
-      <button class="circle vision-bee" type="button" data-vision="bee" aria-pressed="false" aria-label="Honey bee, reds dark, with ultraviolet, blue, and green" title="Honey bee"></button>
-      <button class="circle vision-bird" type="button" data-vision="bird" aria-pressed="false" aria-label="Migratory birds, visible light and ultraviolet" title="Migratory birds"></button>
-      <button class="circle vision-grasshopper" type="button" data-vision="grasshopper" aria-pressed="false" aria-label="Grasshopper, ultraviolet, blue, and green" title="Grasshopper"></button>
-      <button class="circle vision-mantis" type="button" data-vision="mantis" aria-pressed="false" aria-label="Mantis shrimp, unblended colors and polarized light" title="Mantis shrimp"></button>
-      <button class="circle vision-shark" type="button" data-vision="shark" aria-pressed="false" aria-label="Shark, black, white, and gray" title="Shark"></button>
-      <button class="circle vision-dragonfly" type="button" data-vision="dragonfly" aria-pressed="false" aria-label="Dragonfly, ultraviolet to near infrared, polarized light" title="Dragonfly"></button>
+    <div class="vision-fan" id="vision-fan" data-vision="">
+      <button class="corner" type="button" aria-expanded="false" aria-controls="vision-list" aria-label="Vision filters">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12c2.8-4.2 6-6.3 9-6.3S18.2 7.8 21 12c-2.8 4.2-6 6.3-9 6.3S5.8 16.2 3 12z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" /><circle cx="12" cy="12" r="2.3" fill="currentColor" /></svg>
+      </button>
+      <div class="vision-list" id="vision-list">
+        <button class="circle is-on" type="button" style="--i: 0" data-vision="" aria-pressed="true" aria-label="Normal vision" tabindex="-1" aria-hidden="true"></button>
+        <button class="circle vision-dog" type="button" style="--i: 1" data-vision="dog" aria-pressed="false" aria-label="Dog, blue, yellow, and gray" title="Dog" tabindex="-1" aria-hidden="true"></button>
+        <button class="circle vision-cat" type="button" style="--i: 2" data-vision="cat" aria-pressed="false" aria-label="Cat, blue, green, and yellow" title="Cat" tabindex="-1" aria-hidden="true"></button>
+        <button class="circle vision-monarch" type="button" style="--i: 3" data-vision="monarch" aria-pressed="false" aria-label="Monarch butterfly, ultraviolet, blue, green, and orange" title="Monarch butterfly" tabindex="-1" aria-hidden="true"></button>
+        <button class="circle vision-bee" type="button" style="--i: 4" data-vision="bee" aria-pressed="false" aria-label="Honey bee, reds dark, with ultraviolet, blue, and green" title="Honey bee" tabindex="-1" aria-hidden="true"></button>
+        <button class="circle vision-bird" type="button" style="--i: 5" data-vision="bird" aria-pressed="false" aria-label="Migratory birds, visible light and ultraviolet" title="Migratory birds" tabindex="-1" aria-hidden="true"></button>
+        <button class="circle vision-grasshopper" type="button" style="--i: 6" data-vision="grasshopper" aria-pressed="false" aria-label="Grasshopper, ultraviolet, blue, and green" title="Grasshopper" tabindex="-1" aria-hidden="true"></button>
+        <button class="circle vision-mantis" type="button" style="--i: 7" data-vision="mantis" aria-pressed="false" aria-label="Mantis shrimp, unblended colors and polarized light" title="Mantis shrimp" tabindex="-1" aria-hidden="true"></button>
+        <button class="circle vision-shark" type="button" style="--i: 8" data-vision="shark" aria-pressed="false" aria-label="Shark, black, white, and gray" title="Shark" tabindex="-1" aria-hidden="true"></button>
+        <button class="circle vision-dragonfly" type="button" style="--i: 9" data-vision="dragonfly" aria-pressed="false" aria-label="Dragonfly, ultraviolet to near infrared, polarized light" title="Dragonfly" tabindex="-1" aria-hidden="true"></button>
+      </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/hls.js@1.6.13/dist/hls.min.js"></script>
-    <script src="app.js?v=27"></script>
+    <script src="app.js?v=28"></script>
   </body>
 </html>
