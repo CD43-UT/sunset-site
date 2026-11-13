@@ -10,6 +10,7 @@ const canvas = document.getElementById("frame");
 const ctx = canvas.getContext("2d", { alpha: false });
 const empty = document.getElementById("empty");
 const credit = document.getElementById("credit");
+const cameraCount = document.getElementById("camera-count");
 const prevButton = document.querySelector(".nav.prev");
 const nextButton = document.querySelector(".nav.next");
 
@@ -141,11 +142,23 @@ function chooseCameras(features) {
     chosen.push({
       url: props.url,
       kind,
-      name: props.display_name || props.name || "",
+      name: props.name || props.display_name || "",
       attribution: props.attribution || "",
     });
   });
+  const rank = { hls: 0, mjpeg: 1, mp4: 2 };
+  chosen.sort((a, b) => rank[a.kind] - rank[b.kind]);
   return chosen;
+}
+
+async function finiteFile(url) {
+  try {
+    const response = await fetch(url, { method: "HEAD" });
+    const length = Number(response.headers.get("content-length"));
+    return response.ok && Number.isFinite(length) && length > 0;
+  } catch (error) {
+    return false;
+  }
 }
 
 function mediaSize(media) {
@@ -262,6 +275,7 @@ function showEmpty(message) {
   cameraIndex = 0;
   shownUrl = "";
   showCredit(null);
+  updateNav();
   empty.hidden = false;
   empty.textContent = message;
   prevButton.hidden = true;
@@ -273,6 +287,15 @@ function updateNav() {
   const several = cameras.length > 1;
   prevButton.hidden = !several;
   nextButton.hidden = !several;
+  if (!cameras.length) {
+    cameraCount.hidden = true;
+    cameraCount.textContent = "";
+    return;
+  }
+  cameraCount.hidden = false;
+  cameraCount.textContent = cameras.length === 1
+    ? "1 camera near sunset"
+    : `${cameraIndex + 1} of ${cameras.length} cameras near sunset`;
 }
 
 async function showCurrent(attempt = 0) {
@@ -280,6 +303,13 @@ async function showCurrent(attempt = 0) {
   const camera = cameras[cameraIndex];
   if (!camera || attempt > cameras.length) {
     showEmpty("No cameras are near sunset right now.");
+    return;
+  }
+  if (camera.kind === "mp4" && await finiteFile(camera.url)) {
+    if (generation !== playGeneration) return;
+    cameras.splice(cameraIndex, 1);
+    if (cameraIndex >= cameras.length) cameraIndex = 0;
+    await showCurrent(attempt + 1);
     return;
   }
   showCredit(camera);
