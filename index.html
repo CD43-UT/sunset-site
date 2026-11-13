@@ -4,7 +4,46 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Sunset</title>
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="styles.css?v=26" />
+    <style>
+      .band {
+        display: none !important;
+        background: none !important;
+        background-image: none !important;
+      }
+      .controls {
+        background: none !important;
+        background-image: none !important;
+      }
+      .circle {
+        border: 0 !important;
+        background-color: rgba(246, 239, 230, 0.3) !important;
+      }
+      .circle.vision-dog { background-color: rgba(226, 193, 90, 0.3) !important; }
+      .circle.vision-cat { background-color: rgba(154, 165, 138, 0.3) !important; }
+      .circle.vision-monarch { background-color: rgba(224, 122, 47, 0.3) !important; }
+      .circle.vision-bee { background-color: rgba(240, 196, 58, 0.3) !important; }
+      .circle.vision-bird { background-color: rgba(126, 182, 255, 0.3) !important; }
+      .circle.vision-grasshopper { background-color: rgba(125, 190, 74, 0.3) !important; }
+      .circle.vision-mantis { background-color: rgba(255, 90, 209, 0.3) !important; }
+      .circle.vision-shark { background-color: rgba(215, 215, 222, 0.3) !important; }
+      .circle.vision-dragonfly { background-color: rgba(94, 224, 255, 0.3) !important; }
+      .nav {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        padding: 0 !important;
+        line-height: 0 !important;
+        border: 0 !important;
+        background-color: rgba(246, 239, 230, 0.3) !important;
+      }
+      .nav svg {
+        display: block;
+        width: 1.45rem;
+        height: 1.45rem;
+        margin: 0;
+      }
+    </style>
   </head>
   <body>
     <svg class="vision-filters" aria-hidden="true">
@@ -84,7 +123,7 @@
     </button>
     <div class="vision-wash" id="vision-wash" aria-hidden="true"></div>
     <p class="vision-name" id="vision-name" hidden></p>
-    <div class="band">
+    <div class="controls">
       <button class="circle is-on" type="button" data-vision="" aria-pressed="true" aria-label="Normal vision"></button>
       <button class="circle vision-dog" type="button" data-vision="dog" aria-pressed="false" aria-label="Dog, blue, yellow, and gray" title="Dog"></button>
       <button class="circle vision-cat" type="button" data-vision="cat" aria-pressed="false" aria-label="Cat, blue, green, and yellow" title="Cat"></button>

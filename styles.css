@@ -101,11 +101,13 @@ body {
   position: fixed;
   top: 50%;
   z-index: 4;
-  display: grid;
-  place-items: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 3.25rem;
   height: 3.25rem;
   padding: 0;
+  line-height: 0;
   transform: translateY(-50%);
   border: 0;
   border-radius: 50%;
@@ -203,7 +205,7 @@ body[data-vision="dragonfly"] .vision-wash {
   display: none;
 }
 
-.band {
+.controls {
   position: fixed;
   left: 0;
   right: 0;
@@ -223,7 +225,7 @@ body[data-vision="dragonfly"] .vision-wash {
   padding: 0;
   border-radius: 50%;
   border: 0;
-  background: color-mix(in srgb, var(--vision, #f6efe6) 30%, transparent);
+  background-color: rgba(246, 239, 230, 0.3);
   flex: 0 0 auto;
   cursor: pointer;
 }
@@ -234,42 +236,60 @@ body[data-vision="dragonfly"] .vision-wash {
   outline-offset: 3px;
 }
 
-.circle.is-on {
-  background: color-mix(in srgb, var(--vision, #f6efe6) 30%, transparent);
+.circle.is-on,
+.circle.vision-dog,
+.circle.vision-cat,
+.circle.vision-monarch,
+.circle.vision-bee,
+.circle.vision-bird,
+.circle.vision-grasshopper,
+.circle.vision-mantis,
+.circle.vision-shark,
+.circle.vision-dragonfly {
+  border: 0;
 }
 
 .vision-dog {
   --vision: #e2c15a;
+  background-color: rgba(226, 193, 90, 0.3);
 }
 
 .vision-cat {
   --vision: #9aa58a;
+  background-color: rgba(154, 165, 138, 0.3);
 }
 
 .vision-monarch {
   --vision: #e07a2f;
+  background-color: rgba(224, 122, 47, 0.3);
 }
 
 .vision-bee {
   --vision: #f0c43a;
+  background-color: rgba(240, 196, 58, 0.3);
 }
 
 .vision-bird {
   --vision: #7eb6ff;
+  background-color: rgba(126, 182, 255, 0.3);
 }
 
 .vision-grasshopper {
   --vision: #7dbe4a;
+  background-color: rgba(125, 190, 74, 0.3);
 }
 
 .vision-mantis {
   --vision: #ff5ad1;
+  background-color: rgba(255, 90, 209, 0.3);
 }
 
 .vision-shark {
   --vision: #d7d7de;
+  background-color: rgba(215, 215, 222, 0.3);
 }
 
 .vision-dragonfly {
   --vision: #5ee0ff;
+  background-color: rgba(94, 224, 255, 0.3);
 }
