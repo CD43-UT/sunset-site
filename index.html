@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Sunset</title>
-    <link rel="stylesheet" href="styles.css?v=28" />
+    <link rel="stylesheet" href="styles.css?v=29" />
     <style>
       .band {
         display: none !important;
@@ -18,13 +18,14 @@
       }
       .vision-fan {
         position: fixed;
-        left: 0.85rem;
-        bottom: 0.85rem;
         z-index: 5;
-        width: min(7dvh, 6.5vw);
-        height: min(7dvh, 6.5vw);
         --size: min(7dvh, 6.5vw);
-        --radius: min(calc(var(--size) * 6.4), calc(100vw - var(--size) - 2.4rem), calc(100dvh - var(--size) - 2.4rem));
+        --hub: clamp(8rem, 28vw, 18rem);
+        --radius: min(calc(var(--size) * 6.4), calc(100vw - var(--size) * 0.6), calc(100dvh - var(--size) * 0.6));
+        left: calc(var(--hub) / -2);
+        bottom: calc(var(--hub) / -2);
+        width: var(--hub);
+        height: var(--hub);
       }
       .corner {
         position: relative;
@@ -67,12 +68,13 @@
         margin: calc(var(--size) / -2) 0 0 calc(var(--size) / -2);
         opacity: 0;
         pointer-events: none;
-        transform: rotate(calc(var(--i) * -10deg)) translateX(0) rotate(calc(var(--i) * 10deg));
+        --a: calc(8deg + var(--i) * (74deg / 9));
+        transform: rotate(calc(var(--a) * -1)) translateX(0) rotate(var(--a));
       }
       .vision-fan:is(:hover, :focus-within, .is-open, .is-hot):not(.is-shut) .circle {
         opacity: 1;
         pointer-events: auto;
-        transform: rotate(calc(var(--i) * -10deg)) translateX(var(--radius)) rotate(calc(var(--i) * 10deg));
+        transform: rotate(calc(var(--a) * -1)) translateX(var(--radius)) rotate(var(--a));
       }
       .circle {
         border: 0 !important;
