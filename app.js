@@ -179,8 +179,8 @@ function paint(media) {
     canvas.width = pixelWidth;
     canvas.height = pixelHeight;
   }
-  const scale = Math.min(pixelWidth / size.width, pixelHeight / size.height);
-  const destWidth = size.width * scale;
+  const scale = pixelWidth / size.width;
+  const destWidth = pixelWidth;
   const destHeight = size.height * scale;
   ctx.imageSmoothingEnabled = true;
   ctx.imageSmoothingQuality = "high";
