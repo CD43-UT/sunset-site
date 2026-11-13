@@ -77,10 +77,30 @@ body {
   display: none;
 }
 
+.camera-count {
+  position: fixed;
+  top: 0.55rem;
+  left: 50%;
+  z-index: 4;
+  margin: 0;
+  transform: translateX(-50%);
+  padding: 0.28rem 0.75rem;
+  border-radius: 999px;
+  background: rgba(29, 22, 59, 0.82);
+  color: #f6efe6;
+  font: 600 0.85rem/1.2 system-ui, sans-serif;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+.camera-count[hidden] {
+  display: none;
+}
+
 .nav {
   position: fixed;
   top: calc(50% - 6.25dvh);
-  z-index: 3;
+  z-index: 4;
   width: 3.25rem;
   height: 3.25rem;
   padding: 0;
