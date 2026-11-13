@@ -37,7 +37,7 @@ body {
 .stage video,
 .stage img {
   z-index: 0;
-  object-fit: cover;
+  object-fit: contain;
 }
 
 .stage canvas {
@@ -46,7 +46,7 @@ body {
 
 .empty {
   position: absolute;
-  inset: 0 0 12.5dvh;
+  inset: 0;
   z-index: 1;
   display: grid;
   place-items: center;
@@ -99,18 +99,25 @@ body {
 
 .nav {
   position: fixed;
-  top: calc(50% - 6.25dvh);
+  top: 50%;
   z-index: 4;
+  display: grid;
+  place-items: center;
   width: 3.25rem;
   height: 3.25rem;
   padding: 0;
   transform: translateY(-50%);
-  border: 2px solid rgba(246, 239, 230, 0.92);
+  border: 0;
   border-radius: 50%;
-  background: rgba(29, 22, 59, 0.88);
+  background: rgba(246, 239, 230, 0.3);
   color: #f6efe6;
-  font: 500 2rem/1 system-ui, sans-serif;
   cursor: pointer;
+}
+
+.nav svg {
+  display: block;
+  width: 1.45rem;
+  height: 1.45rem;
 }
 
 .nav.prev {
@@ -176,7 +183,7 @@ body[data-vision="dragonfly"] .vision-wash {
 .vision-name {
   position: fixed;
   left: 50%;
-  bottom: calc(12.5dvh + 0.45rem);
+  bottom: calc(min(7dvh, 6.5vw) + 1.4rem);
   z-index: 3;
   width: max-content;
   max-width: calc(100% - 2rem);
@@ -202,21 +209,21 @@ body[data-vision="dragonfly"] .vision-wash {
   right: 0;
   bottom: 0;
   z-index: 2;
-  height: 12.5dvh;
   display: flex;
   align-items: center;
   justify-content: space-evenly;
-  background: linear-gradient(to bottom, #3e3278, #1d163b);
+  padding: 0.9rem 0;
+  background: none;
 }
 
 .circle {
-  width: min(6.5dvh, 6vw);
+  width: min(7dvh, 6.5vw);
   min-width: 0;
   aspect-ratio: 1;
   padding: 0;
   border-radius: 50%;
-  border: 2px solid rgba(246, 239, 230, 0.92);
-  background: transparent;
+  border: 0;
+  background: color-mix(in srgb, var(--vision, #f6efe6) 30%, transparent);
   flex: 0 0 auto;
   cursor: pointer;
 }
@@ -228,50 +235,41 @@ body[data-vision="dragonfly"] .vision-wash {
 }
 
 .circle.is-on {
-  background: var(--vision, rgba(246, 239, 230, 0.92));
+  background: color-mix(in srgb, var(--vision, #f6efe6) 30%, transparent);
 }
 
 .vision-dog {
   --vision: #e2c15a;
-  border-color: #e2c15a;
 }
 
 .vision-cat {
   --vision: #9aa58a;
-  border-color: #9aa58a;
 }
 
 .vision-monarch {
   --vision: #e07a2f;
-  border-color: #e07a2f;
 }
 
 .vision-bee {
   --vision: #f0c43a;
-  border-color: #f0c43a;
 }
 
 .vision-bird {
   --vision: #7eb6ff;
-  border-color: #7eb6ff;
 }
 
 .vision-grasshopper {
   --vision: #7dbe4a;
-  border-color: #7dbe4a;
 }
 
 .vision-mantis {
   --vision: #ff5ad1;
-  border-color: #ff5ad1;
 }
 
 .vision-shark {
   --vision: #d7d7de;
-  border-color: #d7d7de;
 }
 
 .vision-dragonfly {
   --vision: #5ee0ff;
-  border-color: #5ee0ff;
 }

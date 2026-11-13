@@ -179,11 +179,13 @@ function paint(media) {
     canvas.width = pixelWidth;
     canvas.height = pixelHeight;
   }
-  const scale = Math.max(pixelWidth / size.width, pixelHeight / size.height);
+  const scale = Math.min(pixelWidth / size.width, pixelHeight / size.height);
   const destWidth = size.width * scale;
   const destHeight = size.height * scale;
   ctx.imageSmoothingEnabled = true;
   ctx.imageSmoothingQuality = "high";
+  ctx.fillStyle = "#140c09";
+  ctx.fillRect(0, 0, pixelWidth, pixelHeight);
   ctx.drawImage(media, (pixelWidth - destWidth) / 2, (pixelHeight - destHeight) / 2, destWidth, destHeight);
   return true;
 }
