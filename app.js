@@ -1,10 +1,11 @@
-const CATALOG = "https://api.openeye.cam/v1/catalog?embeddable=1&limit=50";
-const MAX_AGE_S = 10 * 60;
+const CATALOG = "https://raw.githubusercontent.com/willytop8/Live-Environment-Streams/main/streams.geojson";
 const HOUR_MS = 60 * 60 * 1000;
 
 const visionButtons = [...document.querySelectorAll(".circle")];
 const visionName = document.getElementById("vision-name");
 const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+const video = document.getElementById("picture");
+const mjpeg = document.getElementById("mjpeg");
 const canvas = document.getElementById("frame");
 const ctx = canvas.getContext("2d", { alpha: false });
 const empty = document.getElementById("empty");
@@ -35,9 +36,9 @@ const OBLIQUITY = RAD * 23.4397;
 
 let cameras = [];
 let cameraIndex = 0;
-let frameCount = 0;
+let hlsPlayer = null;
 let shownUrl = "";
-let paintedClient = "";
+let playGeneration = 0;
 
 if (reduceMotion.matches) {
   document.body.classList.add("reduce-motion");
@@ -81,10 +82,11 @@ function nearSunset(lat, lon, now) {
 }
 
 function streamSeconds() {
+  if (video.readyState >= 2 && Number.isFinite(video.currentTime)) return video.currentTime;
   const drift = document.body.classList.contains("reduce-motion")
     ? Math.floor(performance.now() / 4000)
     : performance.now() / 1000;
-  return frameCount * 5 + drift;
+  return drift;
 }
 
 function placePolar(vision) {
@@ -123,27 +125,39 @@ function tickPolar() {
   window.requestAnimationFrame(tickPolar);
 }
 
-function cameraUrl(camera) {
-  const view = camera.view || {};
-  return view.render === "image" ? view.url : "";
-}
-
-function chooseCameras(items) {
+function chooseCameras(features) {
   const now = Date.now();
-  return items.filter((camera) => {
-    const age = Number(camera.last_frame_age_s);
-    return (
-      cameraUrl(camera) &&
-      Number.isFinite(camera.lat) &&
-      Number.isFinite(camera.lon) &&
-      Number.isFinite(age) &&
-      age <= MAX_AGE_S &&
-      nearSunset(camera.lat, camera.lon, now)
-    );
+  const chosen = [];
+  features.forEach((feature) => {
+    const props = feature.properties || {};
+    const coords = feature.geometry && feature.geometry.coordinates;
+    const kind = props.url_type;
+    if (!props.url || (kind !== "hls" && kind !== "mjpeg" && kind !== "mp4")) return;
+    if (props.coordinates_quality === "country_centroid" || !coords) return;
+    const lon = Number(coords[0]);
+    const lat = Number(coords[1]);
+    if (!Number.isFinite(lat) || !Number.isFinite(lon)) return;
+    if (!nearSunset(lat, lon, now)) return;
+    chosen.push({
+      url: props.url,
+      kind,
+      name: props.display_name || props.name || "",
+      attribution: props.attribution || "",
+    });
   });
+  return chosen;
 }
 
-function paint(image) {
+function mediaSize(media) {
+  return {
+    width: media.videoWidth || media.naturalWidth || 0,
+    height: media.videoHeight || media.naturalHeight || 0,
+  };
+}
+
+function paint(media) {
+  const size = mediaSize(media);
+  if (size.width < 2 || size.height < 2) return false;
   const dpr = Math.min(window.devicePixelRatio || 1, 2);
   const pixelWidth = Math.round(canvas.clientWidth * dpr);
   const pixelHeight = Math.round(canvas.clientHeight * dpr);
@@ -152,81 +166,101 @@ function paint(image) {
     canvas.width = pixelWidth;
     canvas.height = pixelHeight;
   }
-  const scale = Math.max(pixelWidth / image.naturalWidth, pixelHeight / image.naturalHeight);
-  const destWidth = image.naturalWidth * scale;
-  const destHeight = image.naturalHeight * scale;
+  const scale = Math.max(pixelWidth / size.width, pixelHeight / size.height);
+  const destWidth = size.width * scale;
+  const destHeight = size.height * scale;
   ctx.imageSmoothingEnabled = true;
   ctx.imageSmoothingQuality = "high";
-  ctx.drawImage(image, (pixelWidth - destWidth) / 2, (pixelHeight - destHeight) / 2, destWidth, destHeight);
-  paintedClient = `${canvas.clientWidth}x${canvas.clientHeight}`;
+  ctx.drawImage(media, (pixelWidth - destWidth) / 2, (pixelHeight - destHeight) / 2, destWidth, destHeight);
   return true;
 }
 
-function averageLuma(image) {
-  const sample = document.createElement("canvas");
-  sample.width = 32;
-  sample.height = 18;
-  const sampleCtx = sample.getContext("2d", { alpha: false });
-  sampleCtx.drawImage(image, 0, 0, sample.width, sample.height);
-  const data = sampleCtx.getImageData(0, 0, sample.width, sample.height).data;
-  let sum = 0;
-  for (let i = 0; i < data.length; i += 4) sum += data[i] + data[i + 1] + data[i + 2];
-  return sum / (sample.width * sample.height * 3);
+function activeMedia() {
+  if (mjpeg.src && !mjpeg.hidden && mjpeg.naturalWidth) return mjpeg;
+  if (video.readyState >= 2 && video.videoWidth) return video;
+  return null;
 }
 
-function loadImage(url) {
-  return new Promise((resolve, reject) => {
-    const image = new Image();
-    image.onload = () => resolve(image);
-    image.onerror = () => reject(new Error("image"));
-    image.src = url;
+function drawFrame() {
+  const media = activeMedia();
+  if (media && paint(media)) empty.hidden = true;
+  window.requestAnimationFrame(drawFrame);
+}
+
+function stopPlayback() {
+  if (hlsPlayer) {
+    hlsPlayer.destroy();
+    hlsPlayer = null;
+  }
+  video.pause();
+  video.removeAttribute("src");
+  video.load();
+  mjpeg.removeAttribute("src");
+  mjpeg.hidden = true;
+}
+
+function playStream(camera) {
+  stopPlayback();
+  return new Promise((resolve) => {
+    let settled = false;
+    const finish = (ok) => {
+      if (settled) return;
+      settled = true;
+      window.clearTimeout(timer);
+      resolve(ok);
+    };
+    const timer = window.setTimeout(() => finish(false), 10000);
+    if (camera.kind === "mjpeg") {
+      mjpeg.hidden = false;
+      mjpeg.onload = () => finish(mjpeg.naturalWidth > 0);
+      mjpeg.onerror = () => finish(false);
+      mjpeg.src = camera.url;
+      return;
+    }
+    const startVideo = () => {
+      const play = video.play();
+      if (play && play.catch) play.catch(() => {});
+    };
+    if (camera.kind === "hls" && window.Hls && Hls.isSupported()) {
+      hlsPlayer = new Hls({ enableWorker: false, manifestLoadingTimeOut: 8000, levelLoadingTimeOut: 8000 });
+      hlsPlayer.on(Hls.Events.ERROR, (_event, data) => {
+        if (data.fatal) finish(false);
+      });
+      hlsPlayer.on(Hls.Events.MANIFEST_PARSED, startVideo);
+      hlsPlayer.loadSource(camera.url);
+      hlsPlayer.attachMedia(video);
+      video.onloadeddata = () => {
+        if (video.videoWidth > 0) finish(true);
+      };
+      return;
+    }
+    video.onloadeddata = () => {
+      if (video.videoWidth > 0) finish(true);
+    };
+    video.onerror = () => finish(false);
+    video.src = camera.url;
+    startVideo();
   });
 }
 
-async function showFrame(url) {
-  if (!url) return false;
-  try {
-    const response = await fetch(url, { cache: "no-store" });
-    if (!response.ok) return false;
-    const type = response.headers.get("content-type") || "";
-    if (!type.startsWith("image/")) return false;
-    const blob = await response.blob();
-    const objectUrl = URL.createObjectURL(blob);
-    try {
-      const image = await loadImage(objectUrl);
-      if (!image.naturalWidth || !image.naturalHeight) return false;
-      if (averageLuma(image) < 12) return false;
-      if (!paint(image)) return false;
-      frameCount += 1;
-      shownUrl = url;
-      return true;
-    } finally {
-      URL.revokeObjectURL(objectUrl);
-    }
-  } catch (error) {
-    return false;
-  }
-}
-
 function showCredit(camera) {
-  const attribution = camera && camera.redistribution && camera.redistribution.attribution;
-  if (!attribution || !attribution.required || !attribution.name) {
+  const name = camera && camera.attribution;
+  if (!name) {
     credit.hidden = true;
     credit.removeAttribute("href");
     credit.textContent = "";
     return;
   }
   credit.hidden = false;
-  credit.textContent = attribution.name;
-  if (attribution.url) credit.href = attribution.url;
-  else credit.removeAttribute("href");
+  credit.textContent = name;
+  credit.removeAttribute("href");
 }
 
 function showEmpty(message) {
+  stopPlayback();
   cameras = [];
   cameraIndex = 0;
   shownUrl = "";
-  paintedClient = "";
   showCredit(null);
   empty.hidden = false;
   empty.textContent = message;
@@ -235,23 +269,30 @@ function showEmpty(message) {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 }
 
+function updateNav() {
+  const several = cameras.length > 1;
+  prevButton.hidden = !several;
+  nextButton.hidden = !several;
+}
+
 async function showCurrent(attempt = 0) {
+  const generation = attempt === 0 ? ++playGeneration : playGeneration;
   const camera = cameras[cameraIndex];
   if (!camera || attempt > cameras.length) {
     showEmpty("No cameras are near sunset right now.");
     return;
   }
   showCredit(camera);
-  const several = cameras.length > 1;
-  prevButton.hidden = !several;
-  nextButton.hidden = !several;
-  const ok = await showFrame(cameraUrl(camera));
+  updateNav();
+  const ok = await playStream(camera);
+  if (generation !== playGeneration) return;
   if (!ok) {
     cameras.splice(cameraIndex, 1);
     if (cameraIndex >= cameras.length) cameraIndex = 0;
     await showCurrent(attempt + 1);
     return;
   }
+  shownUrl = camera.url;
   empty.hidden = true;
 }
 
@@ -267,35 +308,29 @@ window.addEventListener("keydown", (event) => {
   if (event.key === "ArrowLeft") stepCamera(-1);
   if (event.key === "ArrowRight") stepCamera(1);
 });
-window.addEventListener("resize", () => {
-  if (shownUrl) showFrame(shownUrl);
-});
-new ResizeObserver(() => {
-  const next = `${canvas.clientWidth}x${canvas.clientHeight}`;
-  if (!shownUrl || canvas.clientWidth < 3 || next === paintedClient) return;
-  showFrame(shownUrl);
-}).observe(canvas);
 
 async function refreshCameras() {
   try {
-    const response = await fetch(CATALOG, { headers: { Accept: "application/json" } });
+    const response = await fetch(CATALOG);
     if (!response.ok) throw new Error(String(response.status));
     const data = await response.json();
-    const next = chooseCameras(data.items || []);
-    const currentId = cameras[cameraIndex] && cameras[cameraIndex].id;
+    const next = chooseCameras(data.features || []);
+    const currentUrl = cameras[cameraIndex] && cameras[cameraIndex].url;
     cameras = next;
-    const kept = cameras.findIndex((camera) => camera.id === currentId);
+    const kept = cameras.findIndex((camera) => camera.url === currentUrl);
     cameraIndex = kept >= 0 ? kept : 0;
     if (!cameras.length) {
       showEmpty("No cameras are near sunset right now.");
       return;
     }
-    await showCurrent();
+    updateNav();
+    if (kept < 0 || shownUrl !== cameras[cameraIndex].url) await showCurrent();
   } catch (error) {
     if (!cameras.length) showEmpty("The camera list could not be loaded.");
   }
 }
 
 tickPolar();
+drawFrame();
 refreshCameras();
-window.setInterval(refreshCameras, 45000);
+window.setInterval(refreshCameras, 5 * 60 * 1000);

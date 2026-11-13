@@ -69,6 +69,8 @@
       </filter>
     </svg>
     <div class="stage">
+      <video id="picture" muted autoplay playsinline crossorigin="anonymous"></video>
+      <img id="mjpeg" alt="" crossorigin="anonymous" hidden />
       <canvas id="frame"></canvas>
       <p id="empty" class="empty" hidden>No cameras are near sunset right now.</p>
     </div>
@@ -89,6 +91,7 @@
       <button class="circle vision-shark" type="button" data-vision="shark" aria-pressed="false" aria-label="Shark, black, white, and gray" title="Shark"></button>
       <button class="circle vision-dragonfly" type="button" data-vision="dragonfly" aria-pressed="false" aria-label="Dragonfly, ultraviolet to near infrared, polarized light" title="Dragonfly"></button>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@1.6.13/dist/hls.min.js"></script>
     <script src="app.js"></script>
   </body>
 </html>
