@@ -211,13 +211,14 @@ body[data-vision="dragonfly"] .vision-wash {
 
 .vision-fan {
   --size: min(7dvh, 6.5vw);
-  --radius: min(calc(var(--size) * 6.4), calc(100vw - var(--size) - 2.4rem), calc(100dvh - var(--size) - 2.4rem));
+  --hub: clamp(8rem, 28vw, 18rem);
+  --radius: min(calc(var(--size) * 6.4), calc(100vw - var(--size) * 0.6), calc(100dvh - var(--size) * 0.6));
   position: fixed;
-  left: 0.85rem;
-  bottom: 0.85rem;
+  left: calc(var(--hub) / -2);
+  bottom: calc(var(--hub) / -2);
   z-index: 5;
-  width: var(--size);
-  height: var(--size);
+  width: var(--hub);
+  height: var(--hub);
 }
 
 .vision-fan::before {
@@ -284,7 +285,8 @@ body[data-vision="dragonfly"] .vision-wash {
   margin: calc(var(--size) / -2) 0 0 calc(var(--size) / -2);
   opacity: 0;
   pointer-events: none;
-  transform: rotate(calc(var(--i) * -10deg)) translateX(0) rotate(calc(var(--i) * 10deg));
+  --a: calc(8deg + var(--i) * (74deg / 9));
+  transform: rotate(calc(var(--a) * -1)) translateX(0) rotate(var(--a));
   transition: transform 0.38s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.22s ease;
   transition-delay: 0s;
 }
@@ -292,7 +294,7 @@ body[data-vision="dragonfly"] .vision-wash {
 .vision-fan:is(:hover, :focus-within, .is-open, .is-hot):not(.is-shut) .circle {
   opacity: 1;
   pointer-events: auto;
-  transform: rotate(calc(var(--i) * -10deg)) translateX(var(--radius)) rotate(calc(var(--i) * 10deg));
+  transform: rotate(calc(var(--a) * -1)) translateX(var(--radius)) rotate(var(--a));
   transition-delay: calc(var(--i) * 16ms);
 }
 
