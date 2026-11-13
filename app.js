@@ -99,9 +99,34 @@ function placePolar(vision) {
   wash.style.setProperty("--polar-shift", `${((motion * 6 + POLAR_SHIFT[vision]) % 48).toFixed(2)}px`);
 }
 
+const visionFan = document.getElementById("vision-fan");
+const visionHub = visionFan.querySelector(".corner");
+let fanCloseTimer = 0;
+let fanTouch = false;
+
+function fanOpen() {
+  if (visionFan.classList.contains("is-shut")) return false;
+  return (
+    visionFan.matches(":hover") ||
+    visionFan.matches(":focus-within") ||
+    visionFan.classList.contains("is-open") ||
+    visionFan.classList.contains("is-hot")
+  );
+}
+
+function syncFan() {
+  const open = fanOpen();
+  visionHub.setAttribute("aria-expanded", open ? "true" : "false");
+  visionButtons.forEach((button) => {
+    button.tabIndex = open ? 0 : -1;
+    button.setAttribute("aria-hidden", open ? "false" : "true");
+  });
+}
+
 function setVision(button) {
   const vision = button.dataset.vision || "";
   document.body.dataset.vision = vision;
+  visionFan.dataset.vision = vision;
   canvas.style.filter = vision ? `url(#vision-${vision})` : "none";
   placePolar(vision);
   visionButtons.forEach((item) => {
@@ -115,6 +140,61 @@ function setVision(button) {
 
 visionButtons.forEach((button) => {
   button.addEventListener("click", () => setVision(button));
+});
+
+visionFan.addEventListener("pointerdown", (event) => {
+  fanTouch = event.pointerType === "touch";
+});
+
+visionHub.addEventListener("click", () => {
+  if (!fanTouch) return;
+  fanTouch = false;
+  const open = !visionFan.classList.contains("is-open");
+  visionFan.classList.toggle("is-open", open);
+  visionFan.classList.toggle("is-shut", !open);
+  if (!open && visionFan.contains(document.activeElement)) document.activeElement.blur();
+  syncFan();
+});
+
+visionFan.addEventListener("pointerenter", (event) => {
+  if (event.pointerType === "touch") return;
+  window.clearTimeout(fanCloseTimer);
+  visionFan.classList.remove("is-shut");
+  visionFan.classList.add("is-hot");
+  syncFan();
+});
+
+visionFan.addEventListener("pointerleave", () => {
+  window.clearTimeout(fanCloseTimer);
+  fanCloseTimer = window.setTimeout(() => {
+    visionFan.classList.remove("is-hot");
+    syncFan();
+  }, 220);
+});
+
+visionFan.addEventListener("focusin", () => {
+  visionFan.classList.remove("is-shut");
+  syncFan();
+});
+visionFan.addEventListener("focusout", (event) => {
+  if (visionFan.contains(event.relatedTarget)) return;
+  window.setTimeout(syncFan, 0);
+});
+
+visionFan.addEventListener("keydown", (event) => {
+  if (event.key !== "Escape") return;
+  visionFan.classList.remove("is-open", "is-hot");
+  visionFan.classList.add("is-shut");
+  if (visionFan.contains(document.activeElement)) document.activeElement.blur();
+  syncFan();
+});
+
+document.addEventListener("pointerdown", (event) => {
+  if (visionFan.contains(event.target)) return;
+  if (!fanOpen()) return;
+  visionFan.classList.remove("is-open", "is-hot");
+  visionFan.classList.add("is-shut");
+  syncFan();
 });
 
 reduceMotion.addEventListener("change", (event) => {
