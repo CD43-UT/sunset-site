@@ -214,10 +214,10 @@ body[data-vision="dragonfly"] .vision-wash {
   --hub: clamp(8rem, 28vw, 18rem);
   --row-left: calc(var(--hub) * 0.81555);
   --center: calc(var(--hub) * 0.31555);
-  --lead: clamp(2.25rem, 6.5vw, 4.5rem);
-  --tail: 0.55rem;
-  --dot: calc(var(--hub) / 2);
-  --gap: calc(min(var(--size), calc((100vw - var(--row-left) - var(--lead) - var(--tail)) / 12.88), calc(var(--center) * 2), calc((100dvh - var(--center)) * 2)) * 0.32);
+  --span: calc(100vw - var(--row-left));
+  /* Ten circles and eleven equal gaps fill the span. 338/25 = 10 + 11 * 0.32. */
+  --dot: min(calc(var(--span) * 25 / 338), calc(var(--center) * 2));
+  --gap: calc((var(--span) - 10 * var(--dot)) / 11);
   position: fixed;
   /* Center sits 0.31555 diameters in from the corner, so the left and bottom edges clip one quarter of the area. */
   left: calc(var(--hub) * -0.18445);
@@ -241,7 +241,7 @@ body[data-vision="dragonfly"] .vision-wash {
   box-sizing: border-box;
   height: var(--dot);
   margin: 0;
-  padding: 0 var(--tail) 0 var(--lead);
+  padding: 0 var(--gap);
   pointer-events: none;
 }
 
