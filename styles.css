@@ -212,7 +212,9 @@ body[data-vision="dragonfly"] .vision-wash {
 .vision-fan {
   --size: min(7dvh, 6.5vw);
   --hub: clamp(8rem, 28vw, 18rem);
-  --radius: min(calc(var(--size) * 6.4), calc(100vw - var(--size) * 0.6), calc(100dvh - var(--size) * 0.6));
+  --row-left: calc(var(--hub) * 0.81555);
+  --edge: 0.45rem;
+  --dot: min(var(--size), calc((100vw - var(--row-left) - 2 * var(--edge)) / 12));
   position: fixed;
   /* Center sits 0.31555 diameters in from the corner, so the left and bottom edges clip one quarter of the area. */
   left: calc(var(--hub) * -0.18445);
@@ -222,15 +224,20 @@ body[data-vision="dragonfly"] .vision-wash {
   height: var(--hub);
 }
 
-.vision-fan::before {
-  content: "";
-  position: absolute;
-  z-index: 0;
-  left: 50%;
-  bottom: 50%;
-  width: calc(var(--radius) + var(--size) * 0.65);
-  height: calc(var(--radius) + var(--size) * 0.65);
-  border-radius: 0 100% 0 0;
+.vision-list {
+  position: fixed;
+  z-index: 4;
+  left: var(--row-left);
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: space-between;
+  box-sizing: border-box;
+  height: calc(var(--dot) + 2 * var(--edge));
+  margin: 0;
+  padding: 0 var(--edge);
   pointer-events: none;
 }
 
@@ -279,28 +286,28 @@ body[data-vision="dragonfly"] .vision-wash {
 }
 
 .vision-list .circle {
-  position: absolute;
+  position: relative;
   z-index: 2;
-  left: 50%;
-  top: 50%;
-  margin: calc(var(--size) / -2) 0 0 calc(var(--size) / -2);
+  left: auto;
+  top: auto;
+  flex: 0 0 var(--dot);
+  width: var(--dot);
+  height: var(--dot);
+  margin: 0;
   opacity: 0;
   pointer-events: none;
-  --a: calc(8deg + var(--i) * (74deg / 9));
-  transform: rotate(calc(var(--a) * -1)) translateX(0) rotate(var(--a));
-  transition: transform 0.38s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.22s ease;
-  transition-delay: 0s;
+  transform: none;
+  transition: opacity 0.22s ease;
+}
+
+.vision-fan:is(:hover, :focus-within, .is-open, .is-hot):not(.is-shut) .vision-list {
+  pointer-events: auto;
 }
 
 .vision-fan:is(:hover, :focus-within, .is-open, .is-hot):not(.is-shut) .circle {
   opacity: 1;
   pointer-events: auto;
-  transform: rotate(calc(var(--a) * -1)) translateX(var(--radius)) rotate(var(--a));
-  transition-delay: calc(var(--i) * 16ms);
-}
-
-.vision-fan:is(:hover, .is-hot):not(.is-shut)::before {
-  pointer-events: auto;
+  transform: none;
 }
 
 .corner:focus-visible,

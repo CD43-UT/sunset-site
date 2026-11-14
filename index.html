@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Sunset</title>
-    <link rel="stylesheet" href="styles.css?v=30" />
+    <link rel="stylesheet" href="styles.css?v=31" />
     <style>
       .band {
         display: none !important;
@@ -21,11 +21,28 @@
         z-index: 5;
         --size: min(7dvh, 6.5vw);
         --hub: clamp(8rem, 28vw, 18rem);
-        --radius: min(calc(var(--size) * 6.4), calc(100vw - var(--size) * 0.6), calc(100dvh - var(--size) * 0.6));
+        --row-left: calc(var(--hub) * 0.81555);
+        --edge: 0.45rem;
+        --dot: min(var(--size), calc((100vw - var(--row-left) - 2 * var(--edge)) / 12));
         left: calc(var(--hub) * -0.18445);
         bottom: calc(var(--hub) * -0.18445);
         width: var(--hub);
         height: var(--hub);
+      }
+      .vision-list {
+        position: fixed;
+        left: var(--row-left);
+        right: 0;
+        bottom: 0;
+        display: flex;
+        flex-wrap: nowrap;
+        align-items: center;
+        justify-content: space-between;
+        box-sizing: border-box;
+        height: calc(var(--dot) + 2 * var(--edge));
+        margin: 0;
+        padding: 0 var(--edge);
+        pointer-events: none;
       }
       .corner {
         position: relative;
@@ -59,22 +76,25 @@
       .vision-fan[data-vision="shark"] .corner { background-color: rgba(215, 215, 222, 0.3) !important; }
       .vision-fan[data-vision="dragonfly"] .corner { background-color: rgba(94, 224, 255, 0.3) !important; }
       .vision-list .circle {
-        position: absolute;
+        position: relative;
         z-index: 2;
-        left: 50%;
-        top: 50%;
-        width: var(--size);
-        height: var(--size);
-        margin: calc(var(--size) / -2) 0 0 calc(var(--size) / -2);
+        left: auto;
+        top: auto;
+        flex: 0 0 var(--dot);
+        width: var(--dot);
+        height: var(--dot);
+        margin: 0;
         opacity: 0;
         pointer-events: none;
-        --a: calc(8deg + var(--i) * (74deg / 9));
-        transform: rotate(calc(var(--a) * -1)) translateX(0) rotate(var(--a));
+        transform: none;
+      }
+      .vision-fan:is(:hover, :focus-within, .is-open, .is-hot):not(.is-shut) .vision-list {
+        pointer-events: auto;
       }
       .vision-fan:is(:hover, :focus-within, .is-open, .is-hot):not(.is-shut) .circle {
         opacity: 1;
         pointer-events: auto;
-        transform: rotate(calc(var(--a) * -1)) translateX(var(--radius)) rotate(var(--a));
+        transform: none;
       }
       .circle {
         border: 0 !important;
