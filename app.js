@@ -5,6 +5,9 @@ const HOUR_MS = 60 * 60 * 1000;
 // A camera is listed for the clock hour that contains its sunset, and only then.
 const EXTRA_CAMERAS = [
   { name: "Westport South Beach", lat: 46.89, lon: -124.13, url: "https://stage-ams.srv.axds.co/stream/adaptive/nanoos/westport_south/hls.m3u8", attribution: "NANOOS" },
+  { name: "Westport North Beach", lat: 46.89, lon: -124.13, url: "https://stage-ams.srv.axds.co/stream/adaptive/nanoos/westport_north/hls.m3u8", attribution: "NANOOS" },
+  { name: "Siuslaw River Mouth", lat: 44.02, lon: -124.14, url: "https://stage-ams.srv.axds.co/stream/adaptive/nanoos/siuslaw/hls.m3u8", attribution: "NANOOS" },
+  { name: "Carpinteria State Beach", lat: 34.39, lon: -119.52, url: "https://stage-ams.srv.axds.co/stream/adaptive/sccoos/carpinteria/hls.m3u8", attribution: "SCCOOS" },
   { name: "San Elijo State Beach", lat: 33.02, lon: -117.28, url: "https://stage-ams.srv.axds.co/stream/adaptive/sccoos/san_elijo/hls.m3u8", attribution: "SCCOOS" },
   { name: "Bastendorff Beach", lat: 43.34, lon: -124.35, url: "https://stage-ams.srv.axds.co/stream/adaptive/nanoos/bastendorff/hls.m3u8", attribution: "NANOOS" },
   { name: "Point Reyes Lifeboat Station", lat: 37.99, lon: -122.97, url: "https://stage-ams-nfs.srv.axds.co/stream/adaptive/noaa/tmmc_prls/hls.m3u8", attribution: "NOAA" },
@@ -14,7 +17,11 @@ const EXTRA_CAMERAS = [
   { name: "Biarritz Grande Plage", lat: 43.483, lon: -1.558, url: "https://live.viewsurf.com/liveedge/biarritzgrandeplage_1_1.stream/playlist.m3u8", attribution: "Viewsurf" },
   { name: "Anglet, La Barre", lat: 43.5, lon: -1.52, url: "https://live.viewsurf.com/liveedge/anglet01_1_1.stream/playlist.m3u8", attribution: "Viewsurf" },
   { name: "Aviv Beach, Tel Aviv", lat: 32.072, lon: 34.763, url: "https://s31.ipcamlive.com/streams/1fes5p6gbxlhrad7t/stream.m3u8", attribution: "BeachCam Israel" },
+  { name: "Hilton Beach, Tel Aviv", lat: 32.091, lon: 34.771, url: "https://s27.ipcamlive.com/streams/1btl3et0nds4m5vcm/stream.m3u8", attribution: "BeachCam Israel" },
+  { name: "Bat Galim, Haifa", lat: 32.833, lon: 34.983, url: "https://s5.ipcamlive.com/streams/054mt829jlxrfhk0p/stream.m3u8", attribution: "BeachCam Israel" },
   { name: "Bloemendaal aan Zee", lat: 52.405, lon: 4.537, url: "https://wowza01.crossmediaventures.com/beachcam/beachcam.smil/playlist.m3u8", attribution: "Reddingsbrigade Bloemendaal" },
+  { name: "Praia do Norte, Nazaré", lat: 39.606, lon: -9.085, url: "https://video-auth1.iol.pt/beachcam/nazareparadonorte/playlist.m3u8", attribution: "MEO Beachcam" },
+  { name: "Praia do Guincho", lat: 38.732, lon: -9.473, url: "https://video-auth1.iol.pt/beachcam/praiaguinchosul/playlist.m3u8", attribution: "MEO Beachcam" },
   { name: "Playa Paraíso, Adeje", lat: 28.121, lon: -16.778, url: "https://cdn-005.whatsupcams.com/hls/es_tenerife01.m3u8", attribution: "WhatsUpCams" },
   { name: "Westerly Town Beach", lat: 41.33, lon: -71.79, url: "https://stage-ams.srv.axds.co/stream/adaptive/neracoos/westerly/hls.m3u8", attribution: "NERACOOS" },
   { name: "Holland, Lake Michigan", lat: 42.77, lon: -86.21, url: "https://stage-ams-nfs.srv.axds.co/stream/adaptive/noaa/miholland_ottawa/hls.m3u8", attribution: "NOAA" },
