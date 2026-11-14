@@ -214,8 +214,9 @@ body[data-vision="dragonfly"] .vision-wash {
   --hub: clamp(8rem, 28vw, 18rem);
   --radius: min(calc(var(--size) * 6.4), calc(100vw - var(--size) * 0.6), calc(100dvh - var(--size) * 0.6));
   position: fixed;
-  left: calc(var(--hub) / -2);
-  bottom: calc(var(--hub) / -2);
+  /* Center sits 0.31555 diameters in from the corner, so the left and bottom edges clip one quarter of the area. */
+  left: calc(var(--hub) * -0.18445);
+  bottom: calc(var(--hub) * -0.18445);
   z-index: 5;
   width: var(--hub);
   height: var(--hub);
