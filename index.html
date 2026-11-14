@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Sunset</title>
-    <link rel="stylesheet" href="styles.css?v=31" />
+    <link rel="stylesheet" href="styles.css?v=32" />
     <style>
       .band {
         display: none !important;
@@ -22,8 +22,9 @@
         --size: min(7dvh, 6.5vw);
         --hub: clamp(8rem, 28vw, 18rem);
         --row-left: calc(var(--hub) * 0.81555);
+        --center: calc(var(--hub) * 0.31555);
         --edge: 0.45rem;
-        --dot: min(var(--size), calc((100vw - var(--row-left) - 2 * var(--edge)) / 12));
+        --dot: min(var(--size), calc((100vw - var(--row-left) - 2 * var(--edge)) / 12), calc(2 * (var(--center) - var(--edge))), calc(2 * (100dvh - var(--center) - var(--edge))));
         left: calc(var(--hub) * -0.18445);
         bottom: calc(var(--hub) * -0.18445);
         width: var(--hub);
@@ -33,7 +34,7 @@
         position: fixed;
         left: var(--row-left);
         right: 0;
-        bottom: 0;
+        bottom: calc(var(--center) - var(--dot) / 2 - var(--edge));
         display: flex;
         flex-wrap: nowrap;
         align-items: center;
