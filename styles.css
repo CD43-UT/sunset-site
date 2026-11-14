@@ -214,8 +214,10 @@ body[data-vision="dragonfly"] .vision-wash {
   --hub: clamp(8rem, 28vw, 18rem);
   --row-left: calc(var(--hub) * 0.81555);
   --center: calc(var(--hub) * 0.31555);
-  --edge: 0.45rem;
-  --dot: min(var(--size), calc((100vw - var(--row-left) - 2 * var(--edge)) / 12), calc(2 * (var(--center) - var(--edge))), calc(2 * (100dvh - var(--center) - var(--edge))));
+  --lead: clamp(2.25rem, 6.5vw, 4.5rem);
+  --tail: 0.55rem;
+  --dot: min(var(--size), calc((100vw - var(--row-left) - var(--lead) - var(--tail)) / 11.8), calc(var(--center) * 2), calc((100dvh - var(--center)) * 2));
+  --gap: calc(var(--dot) * 0.2);
   position: fixed;
   /* Center sits 0.31555 diameters in from the corner, so the left and bottom edges clip one quarter of the area. */
   left: calc(var(--hub) * -0.18445);
@@ -230,15 +232,16 @@ body[data-vision="dragonfly"] .vision-wash {
   z-index: 4;
   left: var(--row-left);
   right: 0;
-  bottom: calc(var(--center) - var(--dot) / 2 - var(--edge));
+  bottom: calc(var(--center) - var(--dot) / 2);
   display: flex;
   flex-wrap: nowrap;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
+  gap: var(--gap);
   box-sizing: border-box;
-  height: calc(var(--dot) + 2 * var(--edge));
+  height: var(--dot);
   margin: 0;
-  padding: 0 var(--edge);
+  padding: 0 var(--tail) 0 var(--lead);
   pointer-events: none;
 }
 
@@ -297,8 +300,9 @@ body[data-vision="dragonfly"] .vision-wash {
   margin: 0;
   opacity: 0;
   pointer-events: none;
-  transform: none;
-  transition: opacity 0.22s ease;
+  transform: translateX(calc(var(--i) * (var(--dot) + var(--gap)) * -1));
+  transition: transform 0.32s cubic-bezier(0.22, 0.8, 0.24, 1), opacity 0.22s ease;
+  transition-delay: calc((9 - var(--i)) * 14ms);
 }
 
 .vision-fan:is(:hover, :focus-within, .is-open, .is-hot):not(.is-shut) .vision-list {
@@ -308,7 +312,8 @@ body[data-vision="dragonfly"] .vision-wash {
 .vision-fan:is(:hover, :focus-within, .is-open, .is-hot):not(.is-shut) .circle {
   opacity: 1;
   pointer-events: auto;
-  transform: none;
+  transform: translateX(0);
+  transition-delay: calc(var(--i) * 14ms);
 }
 
 .corner:focus-visible,
