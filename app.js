@@ -16,6 +16,8 @@ const EXTRA_CAMERAS = [
   { name: "Lomani Island, Malolo Lailai", lat: -17.778, lon: 177.155, url: "https://s107.ipcamlive.com/streams/6bgepyzehc6ngxcnd/stream.m3u8", attribution: "Lomani Island Resort" },
   { name: "Biarritz Grande Plage", lat: 43.483, lon: -1.558, url: "https://live.viewsurf.com/liveedge/biarritzgrandeplage_1_1.stream/playlist.m3u8", attribution: "Viewsurf" },
   { name: "Anglet, La Barre", lat: 43.5, lon: -1.52, url: "https://live.viewsurf.com/liveedge/anglet01_1_1.stream/playlist.m3u8", attribution: "Viewsurf" },
+  { name: "San Nicolò, Buggerru", lat: 39.428, lon: 8.412, url: "https://cdn-007.whatsupcams.com/hls/it_buggerru02.m3u8", attribution: "WhatsUpCams" },
+  { name: "S'Archittu", lat: 40.091, lon: 8.472, url: "https://cdn-005.whatsupcams.com/hls/it_cuglieri01.m3u8", attribution: "WhatsUpCams" },
   { name: "Aviv Beach, Tel Aviv", lat: 32.072, lon: 34.763, url: "https://s31.ipcamlive.com/streams/1fes5p6gbxlhrad7t/stream.m3u8", attribution: "BeachCam Israel" },
   { name: "Hilton Beach, Tel Aviv", lat: 32.091, lon: 34.771, url: "https://s27.ipcamlive.com/streams/1btl3et0nds4m5vcm/stream.m3u8", attribution: "BeachCam Israel" },
   { name: "Bat Galim, Haifa", lat: 32.833, lon: 34.983, url: "https://s5.ipcamlive.com/streams/054mt829jlxrfhk0p/stream.m3u8", attribution: "BeachCam Israel" },
