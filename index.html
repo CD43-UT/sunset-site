@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Sunset</title>
-    <link rel="stylesheet" href="styles.css?v=34" />
+    <link rel="stylesheet" href="styles.css?v=35" />
     <style>
       .band {
         display: none !important;
@@ -25,8 +25,8 @@
         --center: calc(var(--hub) * 0.31555);
         --lead: clamp(2.25rem, 6.5vw, 4.5rem);
         --tail: 0.55rem;
-        --dot: min(var(--size), calc((100vw - var(--row-left) - var(--lead) - var(--tail)) / 12.88), calc(var(--center) * 2), calc((100dvh - var(--center)) * 2));
-        --gap: calc(var(--dot) * 0.32);
+        --dot: calc(var(--hub) / 2);
+        --gap: calc(min(var(--size), calc((100vw - var(--row-left) - var(--lead) - var(--tail)) / 12.88), calc(var(--center) * 2), calc((100dvh - var(--center)) * 2)) * 0.32);
         left: calc(var(--hub) * -0.18445);
         bottom: calc(var(--hub) * -0.18445);
         width: var(--hub);
