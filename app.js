@@ -1,30 +1,40 @@
 const CATALOG = "https://raw.githubusercontent.com/willytop8/Live-Environment-Streams/main/streams.geojson";
 const HOUR_MS = 60 * 60 * 1000;
 
-// Public HLS cameras added where the catalog's longitudes leave a gap in the sunset window.
+// Public HLS cameras added where the catalog's longitudes leave a gap,
+// then a second live stream beside a camera that would otherwise be alone.
 const EXTRA_CAMERAS = [
   { name: "Kasitsna Bay", lat: 59.4684, lon: -151.5525, url: "https://stage-ams.srv.axds.co/stream/adaptive/aoos/kasitsna_dock/hls.m3u8", attribution: "AOOS / Kasitsna Bay Laboratory" },
+  { name: "Seldovia City Dock", lat: 59.44, lon: -151.712, url: "https://stage-ams.srv.axds.co/stream/adaptive/aoos/seldovia_dock/hls.m3u8", attribution: "AOOS / WebCOOS" },
   { name: "East Auckland", lat: -36.781, lon: 174.994, url: "https://s127.ipcamlive.com/streams/7fw6t1rpgfzojagvk/stream.m3u8", attribution: "New Plymouth Sport Fishing and Underwater Club" },
   { name: "Plantation Island, Malolo Lailai", lat: -17.783, lon: 177.158, url: "https://s107.ipcamlive.com/streams/6bjsxqxujpac6chnm/stream.m3u8", attribution: "Plantation Island Resort" },
+  { name: "Lomani Island, Malolo Lailai", lat: -17.778, lon: 177.155, url: "https://s107.ipcamlive.com/streams/6bgepyzehc6ngxcnd/stream.m3u8", attribution: "Lomani Island Resort" },
   { name: "Fa'a'ā Airport, Tahiti", lat: -17.559, lon: -149.608, url: "https://s81.ipcamlive.com/streams/51lrjb7qwnfa342ex/stream.m3u8", attribution: "Fa'a'ā International Airport" },
   { name: "Liverpool, Nova Scotia", lat: 44.038, lon: -64.717, url: "https://5790d294af2dc.streamlock.net/IPCameraQCCRFMRadio/default.stream/playlist.m3u8", attribution: "QCCR 99.3 FM" },
   { name: "Villa Gesell beach", lat: -37.256, lon: -56.967, url: "https://cam104.gesell.com.ar/playlist.m3u8", attribution: "Municipio de Villa Gesell" },
   { name: "Ubatuba, SP-055", lat: -23.518, lon: -45.201, url: "https://34.104.32.249.nip.io/SP055-KM073/stream.m3u8", attribution: "Rodovias de São Paulo" },
   { name: "Santa Maria harbour, Sal", lat: 16.597, lon: -22.917, url: "https://s75.ipcamlive.com/streams/4bhb1vl9xdzambqz0/stream.m3u8", attribution: "Santa Maria, Cape Verde" },
+  { name: "Santa Maria kite beach, Sal", lat: 16.62, lon: -22.9, url: "https://s46.ipcamlive.com/streams/2euf9qozlkghnepah/stream.m3u8", attribution: "Santa Maria, Cape Verde" },
   { name: "Playa Paraíso, Adeje", lat: 28.121, lon: -16.778, url: "https://cdn-005.whatsupcams.com/hls/es_tenerife01.m3u8", attribution: "WhatsUpCams" },
   { name: "Fenit harbour", lat: 52.273, lon: -9.863, url: "https://cdn-004.whatsupcams.com/hls/ie_tralee01.m3u8", attribution: "WhatsUpCams" },
   { name: "Doñana", lat: 37.0, lon: -6.37, url: "http://streaming-camaras.ebd.csic.es/cams/cam04.m3u8", attribution: "Estación Biológica de Doñana" },
+  { name: "Doñana cam02", lat: 37.0, lon: -6.37, url: "https://streaming-camaras.ebd.csic.es/cams/cam02.m3u8", attribution: "Estación Biológica de Doñana" },
   { name: "Biarritz Grande Plage", lat: 43.483, lon: -1.558, url: "https://live.viewsurf.com/liveedge/biarritzgrandeplage_1_1.stream/playlist.m3u8", attribution: "Viewsurf" },
   { name: "Akti Kontogialos, Corfu", lat: 39.62, lon: 19.92, url: "https://corfulive.gr/akti_kontogialos/akti_kontogialos.m3u8", attribution: "Corfu Live" },
   { name: "Velikiye Luki", lat: 56.34, lon: 30.545, url: "https://video.iluki.ru/VLK-MAT-1-PUB-4/index.m3u8", attribution: "Velikiye Luki" },
   { name: "Astrakhan", lat: 46.35, lon: 48.033, url: "http://dvr.astrakhan.ru/kuli-46-hd-1/index.m3u8", attribution: "Astrakhan" },
+  { name: "Astrakhan, Kirova", lat: 46.35, lon: 48.033, url: "http://dvr.astrakhan.ru/kir-19-hd-2/index.m3u8", attribution: "Astrakhan" },
   { name: "Yekaterinburg", lat: 56.838, lon: 60.605, url: "http://31.131.80.2:8080/d16c8e89-0ca1-4c5c-ad84-f657f93fb5ef/mono.m3u8", attribution: "Yekaterinburg" },
+  { name: "Yekaterinburg 2", lat: 56.838, lon: 60.605, url: "http://31.131.80.2:8080/a502c4d9-d320-4007-a03a-95158cd0ff34/mono.m3u8", attribution: "Yekaterinburg" },
   { name: "Shymbulak, Almaty", lat: 43.13, lon: 77.08, url: "https://ipcam.kz/cam1/tracks-v1/mono.m3u8", attribution: "Shymbulak" },
   { name: "Barnaul", lat: 53.348, lon: 83.776, url: "https://live.katun24.ru:8082/stroteley_soch/index.m3u8", attribution: "Katun 24" },
   { name: "Krasnoyarsk", lat: 56.015, lon: 92.87, url: "http://62.213.36.148:1935/live/kkd2-top.stream/playlist.m3u8", attribution: "Bobrovy Log" },
   { name: "Irkutsk", lat: 52.287, lon: 104.305, url: "http://tv.streams.baikal-telecom.net/CoWorking_IRGUPS/index.m3u8", attribution: "Irkutsk" },
+  { name: "Irkutsk west", lat: 52.28, lon: 104.25, url: "http://cctv.baikal-telecom.net/Zapadniy_cam1/index.m3u8", attribution: "Irkutsk" },
   { name: "Vrangel", lat: 42.73, lon: 132.75, url: "http://city.vtvn.ru:88/hls_65_4/stream_65_4.m3u8", attribution: "Nakhodka" },
+  { name: "Nakhodka", lat: 42.73, lon: 132.75, url: "http://city.vtvn.ru:88/hls_65_5/stream_65_5.m3u8", attribution: "Nakhodka" },
   { name: "Magadan", lat: 59.568, lon: 150.808, url: "http://rec.maglan.ru:8080/hls/101863/985606ad36895351906f/playlist.m3u8", attribution: "Magadan" },
+  { name: "Magadan 2", lat: 59.568, lon: 150.808, url: "http://rec.maglan.ru:8080/hls/269088/a853cb2da667cc3bd89c/playlist.m3u8", attribution: "Magadan" },
 ];
 
 const visionButtons = [...document.querySelectorAll(".circle")];
