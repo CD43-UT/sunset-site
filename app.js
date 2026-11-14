@@ -1,15 +1,20 @@
 const CATALOG = "https://raw.githubusercontent.com/willytop8/Live-Environment-Streams/main/streams.geojson";
 const HOUR_MS = 60 * 60 * 1000;
 
-// Cameras whose live frame shows open sky toward the sunset.
-// Lomani has the afternoon sun in frame over the ocean.
-// Tahiti has the sun low over the lagoon. Adeje looks across the southwest coast.
-// Biarritz Grande Plage looks west over the Atlantic.
+// Direct HLS streams whose frame is open sky toward the sunset.
+// A camera is listed for the clock hour that contains its sunset, and only then.
 const EXTRA_CAMERAS = [
-  { name: "Lomani Island, Malolo Lailai", lat: -17.778, lon: 177.155, url: "https://s107.ipcamlive.com/streams/6bgepyzehc6ngxcnd/stream.m3u8", attribution: "Lomani Island Resort" },
+  { name: "Westport South Beach", lat: 46.89, lon: -124.13, url: "https://stage-ams.srv.axds.co/stream/adaptive/nanoos/westport_south/hls.m3u8", attribution: "NANOOS" },
+  { name: "San Elijo State Beach", lat: 33.02, lon: -117.28, url: "https://stage-ams.srv.axds.co/stream/adaptive/sccoos/san_elijo/hls.m3u8", attribution: "SCCOOS" },
+  { name: "Point Reyes Lifeboat Station", lat: 37.99, lon: -122.97, url: "https://stage-ams-nfs.srv.axds.co/stream/adaptive/noaa/tmmc_prls/hls.m3u8", attribution: "NOAA" },
+  { name: "Stinson Beach", lat: 37.9, lon: -122.64, url: "https://stage-ams.srv.axds.co/stream/adaptive/cencoos/stinson/hls.m3u8", attribution: "CeNCOOS" },
   { name: "Fa'a'ā Airport, Tahiti", lat: -17.559, lon: -149.608, url: "https://s81.ipcamlive.com/streams/51lrjb7qwnfa342ex/stream.m3u8", attribution: "Fa'a'ā International Airport" },
-  { name: "Playa Paraíso, Adeje", lat: 28.121, lon: -16.778, url: "https://cdn-005.whatsupcams.com/hls/es_tenerife01.m3u8", attribution: "WhatsUpCams" },
+  { name: "Lomani Island, Malolo Lailai", lat: -17.778, lon: 177.155, url: "https://s107.ipcamlive.com/streams/6bgepyzehc6ngxcnd/stream.m3u8", attribution: "Lomani Island Resort" },
   { name: "Biarritz Grande Plage", lat: 43.483, lon: -1.558, url: "https://live.viewsurf.com/liveedge/biarritzgrandeplage_1_1.stream/playlist.m3u8", attribution: "Viewsurf" },
+  { name: "Playa Paraíso, Adeje", lat: 28.121, lon: -16.778, url: "https://cdn-005.whatsupcams.com/hls/es_tenerife01.m3u8", attribution: "WhatsUpCams" },
+  { name: "Westerly Town Beach", lat: 41.33, lon: -71.79, url: "https://stage-ams.srv.axds.co/stream/adaptive/neracoos/westerly/hls.m3u8", attribution: "NERACOOS" },
+  { name: "Holland, Lake Michigan", lat: 42.77, lon: -86.21, url: "https://stage-ams-nfs.srv.axds.co/stream/adaptive/noaa/miholland_ottawa/hls.m3u8", attribution: "NOAA" },
+  { name: "Oak Island West", lat: 33.91, lon: -78.22, url: "https://stage-ams-nfs.srv.axds.co/stream/adaptive/uncw/oakisland_west/hls.m3u8", attribution: "UNCW" },
 ];
 
 const visionButtons = [...document.querySelectorAll(".circle")];
@@ -83,11 +88,11 @@ function sunEvent(date, lat, lon, altitude) {
   return fromJulian(J2000 + eventTransit + 0.0053 * Math.sin(anomaly) - 0.0069 * Math.sin(2 * longitude));
 }
 
-function nearSunset(lat, lon, now) {
+function sunsetThisHour(lat, lon, now) {
   try {
-    const sunset = sunEvent(now, lat, lon, -0.833 * RAD);
-    const civilEnd = sunEvent(now, lat, lon, -6 * RAD);
-    return now >= sunset.getTime() - HOUR_MS && now <= civilEnd.getTime();
+    const sunset = sunEvent(now, lat, lon, -0.833 * RAD).getTime();
+    const hourStart = Math.floor(now / HOUR_MS) * HOUR_MS;
+    return sunset >= hourStart && sunset < hourStart + HOUR_MS;
   } catch (error) {
     return false;
   }
@@ -240,7 +245,7 @@ function chooseCameras(features) {
     const lon = Number(coords[0]);
     const lat = Number(coords[1]);
     if (!Number.isFinite(lat) || !Number.isFinite(lon)) return;
-    if (!nearSunset(lat, lon, now)) return;
+    if (!sunsetThisHour(lat, lon, now)) return;
     chosen.push({
       url: props.url,
       kind,
@@ -249,7 +254,7 @@ function chooseCameras(features) {
     });
   });
   EXTRA_CAMERAS.forEach((camera) => {
-    if (!nearSunset(camera.lat, camera.lon, now)) return;
+    if (!sunsetThisHour(camera.lat, camera.lon, now)) return;
     chosen.push({
       url: camera.url,
       kind: "hls",
