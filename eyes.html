@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Eyes</title>
+    <style>
+      :root {
+        --ink: #241c33;
+        --paper: #f6f1e8;
+        --track: #e4d9c8;
+        --accent: #c45c26;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+      }
+
+      body {
+        display: flex;
+        flex-direction: column;
+        min-height: 100dvh;
+        overflow: hidden;
+        background:
+          radial-gradient(ellipse at 50% -10%, #4a3568 0%, transparent 52%),
+          #1a1428;
+        color: var(--ink);
+        font-family: "Avenir Next", "Segoe UI", system-ui, sans-serif;
+      }
+
+      .bar {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin: 0.85rem auto 0.35rem;
+        padding: 0.55rem 0.85rem 0.55rem 1rem;
+        width: min(36rem, calc(100% - 1.25rem));
+        border-radius: 999px;
+        background: var(--paper);
+        box-shadow: 0 10px 28px rgba(8, 4, 16, 0.28);
+      }
+
+      label {
+        font-weight: 650;
+        letter-spacing: 0.01em;
+      }
+
+      input[type="range"] {
+        -webkit-appearance: none;
+        appearance: none;
+        flex: 1 1 auto;
+        min-width: 0;
+        height: 0.45rem;
+        margin: 0;
+        border-radius: 999px;
+        background: var(--track);
+        cursor: pointer;
+        touch-action: none;
+      }
+
+      input[type="range"]:focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 4px;
+      }
+
+      input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 1.4rem;
+        height: 1.4rem;
+        border: 2px solid #fff8ee;
+        border-radius: 50%;
+        background: var(--accent);
+        box-shadow: 0 1px 3px rgba(20, 10, 8, 0.35);
+        cursor: grab;
+      }
+
+      input[type="range"]::-moz-range-thumb {
+        width: 1.4rem;
+        height: 1.4rem;
+        border: 2px solid #fff8ee;
+        border-radius: 50%;
+        background: var(--accent);
+        box-shadow: 0 1px 3px rgba(20, 10, 8, 0.35);
+        cursor: grab;
+      }
+
+      output {
+        min-width: 2ch;
+        font-size: 1.35rem;
+        font-weight: 700;
+        font-variant-numeric: tabular-nums;
+        text-align: right;
+        line-height: 1;
+      }
+
+      #field {
+        flex: 1;
+        min-height: 0;
+        display: grid;
+        place-items: center;
+        padding: 0.75rem;
+      }
+
+      #eyes {
+        display: grid;
+        grid-template-columns: repeat(var(--cols, 3), var(--eye, 4.5rem));
+        gap: var(--gap, 0.75rem);
+        justify-content: center;
+        align-content: center;
+      }
+
+      .eye {
+        width: var(--eye, 4.5rem);
+        height: calc(var(--eye, 4.5rem) * 0.72);
+        border-radius: 50%;
+        background: radial-gradient(120% 95% at 50% 28%, #ffffff 0%, #f3ecdf 58%, #e3d5c4 100%);
+        box-shadow:
+          inset 0 0 0 calc(var(--eye, 4.5rem) * 0.04) #241c33,
+          0 calc(var(--eye, 4.5rem) * 0.045) calc(var(--eye, 4.5rem) * 0.09) rgba(8, 4, 16, 0.28);
+        display: grid;
+        place-items: center;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .iris {
+        width: 44%;
+        aspect-ratio: 1;
+        border-radius: 50%;
+        background: radial-gradient(
+          circle at 34% 30%,
+          color-mix(in srgb, var(--iris) 62%, white) 0%,
+          var(--iris) 46%,
+          color-mix(in srgb, var(--iris) 35%, black) 100%
+        );
+        transform: translate(var(--gx), var(--gy));
+        display: grid;
+        place-items: center;
+        position: relative;
+        box-shadow: inset 0 0 0 1px rgba(20, 10, 8, 0.28);
+      }
+
+      .pupil {
+        width: 46%;
+        aspect-ratio: 1;
+        border-radius: 50%;
+        background: radial-gradient(circle at 40% 36%, #2a2433 0%, #100e14 70%);
+      }
+
+      .glint {
+        position: absolute;
+        top: 16%;
+        left: 18%;
+        width: 24%;
+        aspect-ratio: 1;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.92);
+      }
+
+      @media (max-width: 520px) {
+        .bar {
+          margin-top: 0.55rem;
+          padding: 0.5rem 0.7rem 0.5rem 0.85rem;
+          gap: 0.55rem;
+        }
+
+        label {
+          font-size: 0.95rem;
+        }
+
+        output {
+          font-size: 1.2rem;
+        }
+
+        #field {
+          padding: 0.45rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="bar">
+      <label for="eye-count">Eyes</label>
+      <input
+        id="eye-count"
+        type="range"
+        min="1"
+        max="40"
+        value="6"
+        aria-valuemin="1"
+        aria-valuemax="40"
+        aria-valuenow="6"
+      />
+      <output id="eye-count-value" for="eye-count">6</output>
+    </header>
+    <main id="field">
+      <div id="eyes" aria-hidden="true"></div>
+    </main>
+    <script>
+      const MIN = 1;
+      const MAX = 40;
+      const IRISES = ["#2b6cb0", "#2f855a", "#8a5a32", "#3d5a40", "#1e4e8c", "#b7791f", "#6b4c7a", "#3f6f8a"];
+
+      const input = document.getElementById("eye-count");
+      const output = document.getElementById("eye-count-value");
+      const field = document.getElementById("field");
+      const grid = document.getElementById("eyes");
+
+      function gaze(index) {
+        const angle = ((index * 47) % 360) * (Math.PI / 180);
+        return {
+          x: Math.cos(angle) * 16,
+          y: Math.sin(angle) * 10,
+        };
+      }
+
+      function eyeMarkup(index) {
+        const look = gaze(index);
+        const color = IRISES[index % IRISES.length];
+        return (
+          '<div class="eye" style="--iris:' +
+          color +
+          ";--gx:" +
+          look.x.toFixed(1) +
+          "%;--gy:" +
+          look.y.toFixed(1) +
+          '%"><span class="iris"><span class="pupil"></span><span class="glint"></span></span></div>'
+        );
+      }
+
+      function fit() {
+        const count = grid.children.length;
+        const style = getComputedStyle(field);
+        const padX = parseFloat(style.paddingLeft) + parseFloat(style.paddingRight);
+        const padY = parseFloat(style.paddingTop) + parseFloat(style.paddingBottom);
+        const availW = field.clientWidth - padX;
+        const availH = field.clientHeight - padY;
+        if (count < 1 || availW < 24 || availH < 24) return;
+
+        const gap = Math.max(6, Math.min(16, availW * 0.018));
+        const ratio = 0.72;
+        let bestCols = 1;
+        let bestSize = 0;
+        for (let cols = 1; cols <= count; cols += 1) {
+          const rows = Math.ceil(count / cols);
+          const width = (availW - gap * (cols - 1)) / cols;
+          const height = (availH - gap * (rows - 1)) / rows;
+          const size = Math.min(width, height / ratio);
+          if (size > bestSize) {
+            bestSize = size;
+            bestCols = cols;
+          }
+        }
+
+        const size = Math.max(12, Math.min(Math.floor(bestSize), 220));
+        grid.style.setProperty("--cols", String(bestCols));
+        grid.style.setProperty("--eye", size + "px");
+        grid.style.setProperty("--gap", gap.toFixed(2) + "px");
+      }
+
+      function render(value) {
+        const count = Math.max(MIN, Math.min(MAX, Math.round(Number(value)) || MIN));
+        input.value = String(count);
+        input.setAttribute("aria-valuenow", String(count));
+        output.textContent = String(count);
+        const shown = grid.children.length;
+        if (shown < count) {
+          const markup = [];
+          for (let index = shown; index < count; index += 1) markup.push(eyeMarkup(index));
+          grid.insertAdjacentHTML("beforeend", markup.join(""));
+        } else {
+          while (grid.children.length > count) grid.lastElementChild.remove();
+        }
+        const span = MAX - MIN;
+        const filled = ((count - MIN) / span) * 100;
+        input.style.background =
+          "linear-gradient(90deg, var(--accent) " + filled + "%, var(--track) " + filled + "%)";
+        fit();
+      }
+
+      input.addEventListener("input", () => render(input.value));
+      new ResizeObserver(fit).observe(field);
+      render(input.value);
+    </script>
+  </body>
+</html>
