@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Sunset</title>
-    <link rel="stylesheet" href="styles.css?v=36" />
+    <link rel="stylesheet" href="styles.css?v=37" />
     <style>
       .band {
         display: none !important;
@@ -133,67 +133,6 @@
     </style>
   </head>
   <body>
-    <svg class="vision-filters" aria-hidden="true">
-      <filter id="vision-dog" color-interpolation-filters="sRGB">
-        <feColorMatrix type="matrix" values="0.85 0.72 -0.38 0 0 0.72 0.64 -0.32 0 0 -0.30 -0.20 1.40 0 0 0 0 0 1 0" />
-        <feComponentTransfer>
-          <feFuncR type="gamma" amplitude="1" exponent="0.92" offset="0" />
-          <feFuncG type="gamma" amplitude="1" exponent="0.92" offset="0" />
-          <feFuncB type="gamma" amplitude="1" exponent="0.92" offset="0" />
-        </feComponentTransfer>
-      </filter>
-      <filter id="vision-cat" color-interpolation-filters="sRGB">
-        <feColorMatrix type="matrix" values="0.18 0.42 0.22 0 0 0.04 1.05 0.10 0 0 0.04 0.16 1.12 0 0 0 0 0 1 0" />
-        <feComponentTransfer>
-          <feFuncR type="gamma" amplitude="1" exponent="0.86" offset="0" />
-          <feFuncG type="gamma" amplitude="1" exponent="0.86" offset="0" />
-          <feFuncB type="gamma" amplitude="1" exponent="0.86" offset="0" />
-        </feComponentTransfer>
-      </filter>
-      <filter id="vision-monarch" color-interpolation-filters="sRGB">
-        <feColorMatrix type="matrix" values="1.20 0.15 0.28 0 0 0.00 1.28 0.00 0 0 0.00 0.06 1.25 0 0 0 0 0 1 0" />
-      </filter>
-      <filter id="vision-bee" color-interpolation-filters="sRGB">
-        <feColorMatrix in="SourceGraphic" type="matrix" values="0.00 0.18 0.62 0 0 0.00 1.20 0.04 0 0 0.00 0.32 1.25 0 0 0 0 0 1 0" result="kept" />
-        <feColorMatrix in="SourceGraphic" type="matrix" values="1 -1 -1 0 0 1 -1 -1 0 0 1 -1 -1 0 0 0 0 0 0 1" result="redness" />
-        <feComponentTransfer in="redness" result="shade">
-          <feFuncR type="linear" slope="-2.4" intercept="1" />
-          <feFuncG type="linear" slope="-2.4" intercept="1" />
-          <feFuncB type="linear" slope="-2.4" intercept="1" />
-        </feComponentTransfer>
-        <feBlend in="kept" in2="shade" mode="multiply" />
-      </filter>
-      <filter id="vision-bird" color-interpolation-filters="sRGB">
-        <feColorMatrix type="matrix" values="1.08 0.00 0.28 0 0 0.00 1.10 0.00 0 0 0.00 0.00 1.22 0 0 0 0 0 1 0" />
-      </filter>
-      <filter id="vision-grasshopper" color-interpolation-filters="sRGB">
-        <feColorMatrix type="matrix" values="0.10 0.04 0.02 0 0 0.04 1.05 0.28 0 0 0.32 0.22 1.12 0 0 0 0 0 1 0" />
-      </filter>
-      <filter id="vision-mantis" color-interpolation-filters="sRGB">
-        <feColorMatrix type="matrix" values="0.30 0.52 0.18 0 0 0.30 0.52 0.18 0 0 0.30 0.52 0.18 0 0 0 0 0 1 0" />
-        <feComponentTransfer>
-          <feFuncR type="discrete" tableValues="0.40 0.78 0.95 0.15 0.08 0.50" />
-          <feFuncG type="discrete" tableValues="0.02 0.05 0.32 0.62 0.16 0.08" />
-          <feFuncB type="discrete" tableValues="0.05 0.07 0.05 0.16 0.86 0.80" />
-        </feComponentTransfer>
-      </filter>
-      <filter id="vision-shark" color-interpolation-filters="sRGB">
-        <feColorMatrix type="matrix" values="0.30 0.52 0.18 0 0 0.30 0.52 0.18 0 0 0.30 0.52 0.18 0 0 0 0 0 1 0" />
-        <feComponentTransfer>
-          <feFuncR type="gamma" amplitude="1" exponent="0.84" offset="0" />
-          <feFuncG type="gamma" amplitude="1" exponent="0.84" offset="0" />
-          <feFuncB type="gamma" amplitude="1" exponent="0.84" offset="0" />
-        </feComponentTransfer>
-        <feComponentTransfer>
-          <feFuncR type="linear" slope="1.32" intercept="-0.1" />
-          <feFuncG type="linear" slope="1.32" intercept="-0.1" />
-          <feFuncB type="linear" slope="1.32" intercept="-0.1" />
-        </feComponentTransfer>
-      </filter>
-      <filter id="vision-dragonfly" color-interpolation-filters="sRGB">
-        <feColorMatrix type="matrix" values="1.40 0.04 0.00 0 0 0.00 0.42 0.00 0 0 0.62 0.00 1.20 0 0 0 0 0 1 0" />
-      </filter>
-    </svg>
     <div class="stage">
       <video id="picture" muted autoplay playsinline crossorigin="anonymous"></video>
       <img id="mjpeg" alt="" crossorigin="anonymous" hidden />
@@ -228,6 +167,6 @@
       </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/hls.js@1.6.13/dist/hls.min.js"></script>
-    <script src="app.js?v=37"></script>
+    <script src="app.js?v=39"></script>
   </body>
 </html>
