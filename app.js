@@ -55,9 +55,6 @@ const VISION_NAMES = {
   dragonfly: "Dragonfly",
 };
 
-const POLAR_BASE = { grasshopper: 24, mantis: 97, dragonfly: 132 };
-const POLAR_SHIFT = { grasshopper: 0, mantis: 9, dragonfly: 18 };
-
 const RAD = Math.PI / 180;
 const DAY_MS = 86400000;
 const J1970 = 2440588;
@@ -119,15 +116,6 @@ function streamSeconds() {
   return drift;
 }
 
-function placePolar(vision) {
-  const wash = document.getElementById("vision-wash");
-  const base = POLAR_BASE[vision];
-  if (base == null) return;
-  const motion = streamSeconds();
-  wash.style.setProperty("--polar-angle", `${((base + motion * 4) % 180).toFixed(2)}deg`);
-  wash.style.setProperty("--polar-shift", `${((motion * 6 + POLAR_SHIFT[vision]) % 48).toFixed(2)}px`);
-}
-
 const visionFan = document.getElementById("vision-fan");
 const visionHub = visionFan.querySelector(".corner");
 let fanCloseTimer = 0;
@@ -156,8 +144,6 @@ function setVision(button) {
   const vision = button.dataset.vision || "";
   document.body.dataset.vision = vision;
   visionFan.dataset.vision = vision;
-  canvas.style.filter = vision ? `url(#vision-${vision})` : "none";
-  placePolar(vision);
   visionButtons.forEach((item) => {
     const on = item === button;
     item.classList.toggle("is-on", on);
@@ -230,11 +216,6 @@ reduceMotion.addEventListener("change", (event) => {
   document.body.classList.toggle("reduce-motion", event.matches);
 });
 
-function tickPolar() {
-  placePolar(document.body.dataset.vision || "");
-  window.requestAnimationFrame(tickPolar);
-}
-
 function showsSunsetSky(props) {
   const scene = props.scene_type || "";
   const environment = props.environment || "";
@@ -297,6 +278,246 @@ function mediaSize(media) {
   };
 }
 
+function byte(v) {
+  return v < 0 ? 0 : v > 255 ? 255 : v | 0;
+}
+
+function makeLift(exp, floor) {
+  const lut = new Uint8Array(256);
+  for (let i = 0; i < 256; i += 1) {
+    const t = Math.pow(i / 255, exp);
+    lut[i] = byte((floor + (1 - floor) * t) * 255);
+  }
+  return lut;
+}
+
+const LIFT_DOG = makeLift(0.94, 0.045);
+const LIFT_CAT = makeLift(0.82, 0.11);
+
+const MANTIS_BANDS = 18;
+const mantisBand = new Uint8Array(MANTIS_BANDS * 3);
+
+function mantisHue(h) {
+  const i = Math.floor(h * 6);
+  const f = h * 6 - i;
+  const q = 255 * (1 - f);
+  const t = 255 * f;
+  switch (i % 6) {
+    case 0: return [255, t, 0];
+    case 1: return [q, 255, 0];
+    case 2: return [0, 255, t];
+    case 3: return [0, q, 255];
+    case 4: return [t, 0, 255];
+    default: return [255, 0, q];
+  }
+}
+
+for (let band = 0; band < MANTIS_BANDS; band += 1) {
+  const h = band / MANTIS_BANDS;
+  const rgb = mantisHue(h);
+  if (h < 0.06 || h > 0.94) {
+    rgb[1] *= 0.35;
+    rgb[2] *= 0.35;
+  } else if (h > 0.55 && h < 0.78) {
+    rgb[0] = Math.min(255, rgb[0] + 70);
+  }
+  mantisBand[band * 3] = byte(rgb[0]);
+  mantisBand[band * 3 + 1] = byte(rgb[1]);
+  mantisBand[band * 3 + 2] = byte(rgb[2]);
+}
+
+const POLAR = {
+  grasshopper: { angle: 24, spacing: 28, thickness: 2 },
+  mantis: { angle: 97, spacing: 15, thickness: 1 },
+  dragonfly: { angle: 132, spacing: 20, thickness: 1 },
+};
+
+const scratch = [0, 0, 0];
+
+function rgb(r, g, b) {
+  scratch[0] = r;
+  scratch[1] = g;
+  scratch[2] = b;
+  return scratch;
+}
+
+function paintDog(r, g, b) {
+  const y = (r + g) / 2;
+  const l = 0.3 * r + 0.5 * g + 0.2 * b;
+  const warm = Math.max(0, y - b);
+  const cool = Math.max(0, b - y);
+  return rgb(
+    LIFT_DOG[byte(l + warm * 0.16 - cool * 0.42)],
+    LIFT_DOG[byte(l + warm * 0.05 - cool * 0.42)],
+    LIFT_DOG[byte(l - warm * 0.48 + cool * 0.62)]
+  );
+}
+
+function paintCat(r, g, b) {
+  const chroma = Math.max(r, g, b) - Math.min(r, g, b);
+  if (chroma < 14) {
+    const c = LIFT_CAT[byte(0.3 * r + 0.59 * g + 0.11 * b)];
+    return rgb(c, c, c);
+  }
+  const gCone = g * 0.9 + r * 0.08;
+  const seen = 0.35 * r + 0.45 * g + 0.2 * b;
+  const mute = Math.min(1, Math.max(0, (r - g) / 110));
+  let nr = gCone * 0.46 + b * 0.16;
+  let ng = gCone * 1.02 + b * 0.04;
+  let nb = b * 1.08 + g * 0.1;
+  if (b > r && b > g) nr += b * 0.12;
+  nr = nr * (1 - mute) + seen * 0.58 * mute;
+  ng = ng * (1 - mute) + seen * 0.54 * mute;
+  nb = nb * (1 - mute) + seen * 0.38 * mute;
+  return rgb(LIFT_CAT[byte(nr)], LIFT_CAT[byte(ng)], LIFT_CAT[byte(nb)]);
+}
+
+function paintMonarch(r, g, b) {
+  const warm = Math.max(0, Math.min(r, g * 1.15) - b);
+  return rgb(
+    byte(r * 1.02 + b * 0.08 + warm * 0.14),
+    byte(g * 1.12 + warm * 0.08),
+    byte(b * 1.14 + r * 0.02)
+  );
+}
+
+function paintBee(r, g, b) {
+  const redExcess = r - g * 1.55 - b * 0.4;
+  const redDark = redExcess > 24 ? Math.min(1, (redExcess - 24) / 110) : 0;
+  const yg = g * 0.7 + Math.min(r, g * 1.1) * 0.3;
+  let nr = Math.min(r, g * 1.05) * 0.48 + b * 0.7;
+  let ng = g * 1.04 + Math.min(r, g) * 0.14;
+  let nb = b * 1.2 + g * 0.06;
+  const chroma = Math.max(r, g, b) - Math.min(r, g, b);
+  const purple = chroma < 28 ? 0 : (Math.min(yg, b) / 255) * Math.min(1, chroma / 90);
+  nr += purple * 48;
+  nb += purple * 28;
+  ng *= 1 - purple * 0.2;
+  const dark = 20;
+  return rgb(
+    byte(nr * (1 - redDark) + dark * redDark),
+    byte(ng * (1 - redDark) + dark * redDark),
+    byte(nb * (1 - redDark) + (dark + 6) * redDark)
+  );
+}
+
+function paintBird(r, g, b) {
+  return rgb(byte(r * 1.02 + b * 0.07), byte(g * 1.04), byte(b * 1.1 + r * 0.015));
+}
+
+function paintGrasshopper(r, g, b) {
+  const nr = r * 0.56 + b * 0.05 + g * 0.06;
+  const ng = g * 1.16 + b * 0.1 + r * 0.04;
+  const nb = b * 1.2 + g * 0.1 + r * 0.05;
+  const chroma = Math.max(r, g, b) - Math.min(r, g, b);
+  const mix = Math.min(1, 0.28 + chroma / 90);
+  return rgb(
+    byte(r * (1 - mix) + nr * mix),
+    byte(g * (1 - mix) + ng * mix),
+    byte(b * (1 - mix) + nb * mix)
+  );
+}
+
+function paintMantis(r, g, b) {
+  const max = r > g ? (r > b ? r : b) : g > b ? g : b;
+  const min = r < g ? (r < b ? r : b) : g < b ? g : b;
+  const d = max - min;
+  const level = Math.min(255, Math.round(max / 51) * 51);
+  if (d < 18) return rgb(level, level, level);
+  let h;
+  if (max === r) h = (g - b) / d;
+  else if (max === g) h = (b - r) / d + 2;
+  else h = (r - g) / d + 4;
+  if (h < 0) h += 6;
+  const band = Math.round((h / 6) * MANTIS_BANDS) % MANTIS_BANDS;
+  const scale = level / 255;
+  return rgb(
+    byte(mantisBand[band * 3] * scale),
+    byte(mantisBand[band * 3 + 1] * scale),
+    byte(mantisBand[band * 3 + 2] * scale)
+  );
+}
+
+function paintShark(r, g, b) {
+  const x = (0.3 * r + 0.52 * g + 0.18 * b) / 255;
+  let t = 0.07 + 0.93 * Math.pow(x, 0.8);
+  t = (t - 0.5) * 1.15 + 0.5;
+  const c = byte(Math.min(1, Math.max(0, t)) * 255);
+  return rgb(c, c, c);
+}
+
+function paintDragonfly(r, g, b) {
+  let nr = r * 1.26 + b * 0.16;
+  let ng = g * 0.98;
+  let nb = b * 1.16;
+  if (r > g * 1.35 && r > b * 1.2) {
+    ng *= 0.72;
+    nb *= 0.62;
+    nr = Math.min(255, nr + 8);
+  } else if (b > r && b > g) {
+    nr += b * 0.08;
+  }
+  const chroma = Math.max(r, g, b) - Math.min(r, g, b);
+  const mix = Math.min(1, chroma / 48);
+  return rgb(
+    byte(r * (1 - mix) + nr * mix),
+    byte(g * (1 - mix) + ng * mix),
+    byte(b * (1 - mix) + nb * mix)
+  );
+}
+
+const VISION_PAINT = {
+  dog: paintDog,
+  cat: paintCat,
+  monarch: paintMonarch,
+  bee: paintBee,
+  bird: paintBird,
+  grasshopper: paintGrasshopper,
+  mantis: paintMantis,
+  shark: paintShark,
+  dragonfly: paintDragonfly,
+};
+
+function applyVisionPixels(data, width, height, vision, seconds) {
+  const paintPixel = VISION_PAINT[vision];
+  if (!paintPixel) return;
+  const polar = POLAR[vision];
+  let cos = 0;
+  let sin = 0;
+  let shift = 0;
+  let spacing = 1;
+  let thickness = 0;
+  if (polar) {
+    const theta = ((polar.angle + seconds * 4) % 180) * (Math.PI / 180);
+    cos = Math.cos(theta);
+    sin = Math.sin(theta);
+    spacing = polar.spacing;
+    thickness = polar.thickness;
+    shift = seconds * 28;
+  }
+  for (let y = 0, i = 0; y < height; y += 1) {
+    for (let x = 0; x < width; x += 1, i += 4) {
+      const next = paintPixel(data[i], data[i + 1], data[i + 2]);
+      let r = next[0];
+      let g = next[1];
+      let b = next[2];
+      if (polar) {
+        let coord = x * cos + y * sin + shift;
+        coord -= Math.floor(coord / spacing) * spacing;
+        if (coord < 0) coord += spacing;
+        if (coord < thickness) {
+          r = r * 0.93 + 17.85;
+          g = g * 0.93 + 17.85;
+          b = b * 0.93 + 17.85;
+        }
+      }
+      data[i] = r;
+      data[i + 1] = g;
+      data[i + 2] = b;
+    }
+  }
+}
+
 function paint(media) {
   const size = mediaSize(media);
   if (size.width < 2 || size.height < 2) return false;
@@ -316,6 +537,16 @@ function paint(media) {
   ctx.fillStyle = "#140c09";
   ctx.fillRect(0, 0, pixelWidth, pixelHeight);
   ctx.drawImage(media, (pixelWidth - destWidth) / 2, (pixelHeight - destHeight) / 2, destWidth, destHeight);
+  const vision = document.body.dataset.vision || "";
+  if (vision) {
+    try {
+      const image = ctx.getImageData(0, 0, pixelWidth, pixelHeight);
+      applyVisionPixels(image.data, pixelWidth, pixelHeight, vision, streamSeconds());
+      ctx.putImageData(image, 0, 0);
+    } catch (error) {
+      // A tainted frame stays as drawn instead of clearing the picture.
+    }
+  }
   return true;
 }
 
@@ -491,7 +722,6 @@ async function refreshCameras() {
   }
 }
 
-tickPolar();
 drawFrame();
 refreshCameras();
 window.setInterval(refreshCameras, 5 * 60 * 1000);
