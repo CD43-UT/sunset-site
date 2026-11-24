@@ -291,45 +291,12 @@ function makeLift(exp, floor) {
   return lut;
 }
 
-const LIFT_DOG = makeLift(0.94, 0.045);
-const LIFT_CAT = makeLift(0.82, 0.11);
-
-const MANTIS_BANDS = 18;
-const mantisBand = new Uint8Array(MANTIS_BANDS * 3);
-
-function mantisHue(h) {
-  const i = Math.floor(h * 6);
-  const f = h * 6 - i;
-  const q = 255 * (1 - f);
-  const t = 255 * f;
-  switch (i % 6) {
-    case 0: return [255, t, 0];
-    case 1: return [q, 255, 0];
-    case 2: return [0, 255, t];
-    case 3: return [0, q, 255];
-    case 4: return [t, 0, 255];
-    default: return [255, 0, q];
-  }
-}
-
-for (let band = 0; band < MANTIS_BANDS; band += 1) {
-  const h = band / MANTIS_BANDS;
-  const rgb = mantisHue(h);
-  if (h < 0.06 || h > 0.94) {
-    rgb[1] *= 0.35;
-    rgb[2] *= 0.35;
-  } else if (h > 0.55 && h < 0.78) {
-    rgb[0] = Math.min(255, rgb[0] + 70);
-  }
-  mantisBand[band * 3] = byte(rgb[0]);
-  mantisBand[band * 3 + 1] = byte(rgb[1]);
-  mantisBand[band * 3 + 2] = byte(rgb[2]);
-}
+const LIFT_SLIGHT = makeLift(0.97, 0.025);
 
 const POLAR = {
-  grasshopper: { angle: 24, spacing: 28, thickness: 2 },
-  mantis: { angle: 97, spacing: 15, thickness: 1 },
-  dragonfly: { angle: 132, spacing: 20, thickness: 1 },
+  grasshopper: { angle: 24, spacing: 28, thickness: 1 },
+  mantis: { angle: 97, spacing: 16, thickness: 1 },
+  dragonfly: { angle: 132, spacing: 22, thickness: 1 },
 };
 
 const scratch = [0, 0, 0];
@@ -342,75 +309,71 @@ function rgb(r, g, b) {
 }
 
 function paintDog(r, g, b) {
-  const y = (r + g) / 2;
-  const l = 0.3 * r + 0.5 * g + 0.2 * b;
-  const warm = Math.max(0, y - b);
-  const cool = Math.max(0, b - y);
-  return rgb(
-    LIFT_DOG[byte(l + warm * 0.16 - cool * 0.42)],
-    LIFT_DOG[byte(l + warm * 0.05 - cool * 0.42)],
-    LIFT_DOG[byte(l - warm * 0.48 + cool * 0.62)]
-  );
+  const l = 0.299 * r + 0.587 * g + 0.114 * b;
+  const rg = (r + g) / 2;
+  const rgGap = Math.abs(r - g);
+  const warm = Math.max(0, rg - b);
+  const amount = Math.min(1, (rgGap * 0.7 + warm * 0.4) / 120);
+  const mix = Math.min(0.88, amount * (g > r + 24 ? 1.05 : 0.74));
+  const dull = rg * 0.58 + l * 0.42;
+  const nr = r * (1 - mix) + (dull * 1.04) * mix;
+  const ng = g * (1 - mix) + (dull * 0.9) * mix;
+  const nb = b * (1 - mix) + (b * 0.82 + l * 0.18) * mix;
+  return rgb(LIFT_SLIGHT[byte(nr)], LIFT_SLIGHT[byte(ng)], LIFT_SLIGHT[byte(nb)]);
 }
 
 function paintCat(r, g, b) {
-  const chroma = Math.max(r, g, b) - Math.min(r, g, b);
-  if (chroma < 14) {
-    const c = LIFT_CAT[byte(0.3 * r + 0.59 * g + 0.11 * b)];
-    return rgb(c, c, c);
-  }
-  const gCone = g * 0.9 + r * 0.08;
-  const seen = 0.35 * r + 0.45 * g + 0.2 * b;
-  const mute = Math.min(1, Math.max(0, (r - g) / 110));
-  let nr = gCone * 0.46 + b * 0.16;
-  let ng = gCone * 1.02 + b * 0.04;
-  let nb = b * 1.08 + g * 0.1;
-  if (b > r && b > g) nr += b * 0.12;
-  nr = nr * (1 - mute) + seen * 0.58 * mute;
-  ng = ng * (1 - mute) + seen * 0.54 * mute;
-  nb = nb * (1 - mute) + seen * 0.38 * mute;
-  return rgb(LIFT_CAT[byte(nr)], LIFT_CAT[byte(ng)], LIFT_CAT[byte(nb)]);
+  const l = 0.3 * r + 0.5 * g + 0.2 * b;
+  const redder = Math.max(0, r - Math.max(g, b));
+  const mute = Math.min(0.62, redder / 200);
+  let nr = r * (1 - mute) + l * mute;
+  let ng = g * (1 - mute * 0.45) + l * mute * 0.35;
+  let nb = b * (1 - mute * 0.25) + l * mute * 0.15;
+  if (b > r && b > g) nr += (b - Math.max(r, g)) * 0.07;
+  return rgb(LIFT_SLIGHT[byte(nr)], LIFT_SLIGHT[byte(ng)], LIFT_SLIGHT[byte(nb)]);
 }
 
 function paintMonarch(r, g, b) {
-  const warm = Math.max(0, Math.min(r, g * 1.15) - b);
+  const blue = Math.max(0, b - Math.max(r, g));
+  const warm = Math.max(0, Math.min(r, g) - b);
   return rgb(
-    byte(r * 1.02 + b * 0.08 + warm * 0.14),
-    byte(g * 1.12 + warm * 0.08),
-    byte(b * 1.14 + r * 0.02)
+    byte(r + blue * 0.1 + warm * 0.045),
+    byte(g + warm * 0.03),
+    byte(b + blue * 0.04)
   );
 }
 
 function paintBee(r, g, b) {
-  const redExcess = r - g * 1.55 - b * 0.4;
-  const redDark = redExcess > 24 ? Math.min(1, (redExcess - 24) / 110) : 0;
-  const yg = g * 0.7 + Math.min(r, g * 1.1) * 0.3;
-  let nr = Math.min(r, g * 1.05) * 0.48 + b * 0.7;
-  let ng = g * 1.04 + Math.min(r, g) * 0.14;
-  let nb = b * 1.2 + g * 0.06;
-  const chroma = Math.max(r, g, b) - Math.min(r, g, b);
-  const purple = chroma < 28 ? 0 : (Math.min(yg, b) / 255) * Math.min(1, chroma / 90);
-  nr += purple * 48;
-  nb += purple * 28;
-  ng *= 1 - purple * 0.2;
-  const dark = 20;
-  return rgb(
-    byte(nr * (1 - redDark) + dark * redDark),
-    byte(ng * (1 - redDark) + dark * redDark),
-    byte(nb * (1 - redDark) + (dark + 6) * redDark)
-  );
+  const redder = r - Math.max(g, b) * 1.2;
+  const redDark = redder > 28 ? Math.min(0.84, (redder - 28) / 130) : 0;
+  let nr = r * (1 - redDark) + 24 * redDark;
+  let ng = g * (1 - redDark) + 22 * redDark;
+  let nb = b * (1 - redDark) + 24 * redDark;
+  if (b > g && b > r) nr += (b - r) * 0.12;
+  const yg = Math.min(r, g);
+  if (redDark < 0.15 && yg > 100 && b > 80) {
+    const purple = (Math.min(yg, b) / 255) * 0.07;
+    nr += purple * 140;
+    nb += purple * 90;
+    ng *= 1 - purple;
+  } else if (redDark < 0.1 && r > 160 && g > 140 && b < 110) {
+    ng = ng * 0.95 + g * 0.06;
+    nr *= 0.97;
+  }
+  return rgb(byte(nr), byte(ng), byte(nb));
 }
 
 function paintBird(r, g, b) {
-  return rgb(byte(r * 1.02 + b * 0.07), byte(g * 1.04), byte(b * 1.1 + r * 0.015));
+  const blue = Math.max(0, b - (r + g) / 2);
+  return rgb(byte(r + blue * 0.08), byte(g), byte(b + blue * 0.025));
 }
 
 function paintGrasshopper(r, g, b) {
-  const nr = r * 0.56 + b * 0.05 + g * 0.06;
-  const ng = g * 1.16 + b * 0.1 + r * 0.04;
-  const nb = b * 1.2 + g * 0.1 + r * 0.05;
   const chroma = Math.max(r, g, b) - Math.min(r, g, b);
-  const mix = Math.min(1, 0.28 + chroma / 90);
+  const mix = Math.min(1, chroma / 36);
+  const nr = r * 0.82;
+  const ng = g * 1.06 + b * 0.04;
+  const nb = b * 1.07 + g * 0.03;
   return rgb(
     byte(r * (1 - mix) + nr * mix),
     byte(g * (1 - mix) + ng * mix),
@@ -422,43 +385,56 @@ function paintMantis(r, g, b) {
   const max = r > g ? (r > b ? r : b) : g > b ? g : b;
   const min = r < g ? (r < b ? r : b) : g < b ? g : b;
   const d = max - min;
-  const level = Math.min(255, Math.round(max / 51) * 51);
-  if (d < 18) return rgb(level, level, level);
+  if (d < 10 || max < 8) return rgb(r, g, b);
   let h;
   if (max === r) h = (g - b) / d;
   else if (max === g) h = (b - r) / d + 2;
   else h = (r - g) / d + 4;
   if (h < 0) h += 6;
-  const band = Math.round((h / 6) * MANTIS_BANDS) % MANTIS_BANDS;
-  const scale = level / 255;
-  return rgb(
-    byte(mantisBand[band * 3] * scale),
-    byte(mantisBand[band * 3 + 1] * scale),
-    byte(mantisBand[band * 3 + 2] * scale)
-  );
+  const bands = 12;
+  const snapped = (Math.round((h / 6) * bands) % bands) / bands;
+  const sat = d / max;
+  const i = Math.floor(snapped * 6);
+  const f = snapped * 6 - i;
+  const p = max * (1 - sat);
+  const q = max * (1 - f * sat);
+  const t = max * (1 - (1 - f) * sat);
+  let nr = max;
+  let ng = t;
+  let nb = p;
+  switch (i % 6) {
+    case 0: nr = max; ng = t; nb = p; break;
+    case 1: nr = q; ng = max; nb = p; break;
+    case 2: nr = p; ng = max; nb = t; break;
+    case 3: nr = p; ng = q; nb = max; break;
+    case 4: nr = t; ng = p; nb = max; break;
+    default: nr = max; ng = p; nb = q; break;
+  }
+  return rgb(byte(nr), byte(ng), byte(nb));
 }
 
 function paintShark(r, g, b) {
-  const x = (0.3 * r + 0.52 * g + 0.18 * b) / 255;
-  let t = 0.07 + 0.93 * Math.pow(x, 0.8);
-  t = (t - 0.5) * 1.15 + 0.5;
-  const c = byte(Math.min(1, Math.max(0, t)) * 255);
+  let y = 0.299 * r + 0.587 * g + 0.114 * b;
+  y = y * 0.94 + 10;
+  y = (y - 118) * 1.05 + 118;
+  const c = byte(y);
   return rgb(c, c, c);
 }
 
 function paintDragonfly(r, g, b) {
-  let nr = r * 1.26 + b * 0.16;
-  let ng = g * 0.98;
-  let nb = b * 1.16;
-  if (r > g * 1.35 && r > b * 1.2) {
-    ng *= 0.72;
-    nb *= 0.62;
-    nr = Math.min(255, nr + 8);
-  } else if (b > r && b > g) {
-    nr += b * 0.08;
+  let nr = r;
+  let ng = g;
+  let nb = b;
+  if (r > g * 1.15 && r > b && r > 70) {
+    nr = Math.min(255, r * 1.08);
+    ng = g * 0.9;
+    nb = b * 0.86;
+  } else if (b > r + 8 && b > g + 8) {
+    nr = r + (b - r) * 0.16;
+    nb = Math.min(255, b * 1.04);
   }
   const chroma = Math.max(r, g, b) - Math.min(r, g, b);
-  const mix = Math.min(1, chroma / 48);
+  const mix = Math.min(0.62, chroma / 70);
   return rgb(
     byte(r * (1 - mix) + nr * mix),
     byte(g * (1 - mix) + ng * mix),
